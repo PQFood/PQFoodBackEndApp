@@ -1,0 +1,25 @@
+{
+  "name": "backendpqfood",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --inspect src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^1.28.1",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.17.3",
+    "express-session": "^1.17.2",
+    "moment": "^2.29.1",
+    "mongoose": "^6.2.6",
+    "mongoose-delete": "^0.5.4",
+    "mongoose-slug-generator": "^1.0.4",
+    "nodemon": "^2.0.15",
+    "sha256": "^0.2.0",
+    "short-unique-id": "^4.4.4"
+  }
+}

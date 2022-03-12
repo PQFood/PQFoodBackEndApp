@@ -1,0 +1,241 @@
+body{
+    background-color: #DAE2F8;
+}
+/* footer */
+.footer ul li{
+    list-style-type: none;
+}
+.footer{
+    background-color: rgb(219, 219, 210) !important;
+}
+.footer ul li a{
+    text-decoration: none;
+    color: rgb(150, 150, 141);
+}
+.iconFooter{
+    color: rgb(150, 150, 141);
+}
+.footer ul{
+    padding-inline-start: 0px;
+}
+
+/* header */
+.form-inline
+{
+    flex-flow: unset;
+}
+.iconCart{
+    color: white;
+    font-size: 5vh;
+    display: block;
+}
+
+@media (max-width: 575.98px) {
+        .contentMdHidden
+        {
+            margin-left: 10px !important;
+        }
+        .rightItem
+        {
+            display: block !important;
+        }
+        .rightItemLink{
+            padding-left: 10px !important;
+        }
+        .imageProduct {
+            height: 350px !important;
+        }
+        .avatarResponsive{
+            margin-left: 10px;
+        }
+    }
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .contentMdHidden
+    {
+        margin-left: 5px !important;
+    }
+    .rightItem
+    {
+        display: block !important;
+    }
+    .rightItemLink{
+        padding-left: 10px !important;
+    }
+    .avatarResponsive{
+        margin-left: 10px;
+    }
+}
+.sortMenu{
+    background-color: white;
+}
+.footerPadding{
+    padding-left: 0px !important;
+}
+
+.alert{
+    border-radius: 0px !important;
+}
+.cartItem
+{
+    position: relative;
+}
+
+.cartQuantity{
+    position: absolute;
+    color: #EA4335;
+    background-color: white;
+    border: 2px solid #28a745;
+    align-items: center;
+    left: 38px;
+    padding: 0px 5px;
+    border-radius: 50%;
+}
+
+
+/* register */
+.facegg{
+    display: block !important;
+}
+.facebook{
+    background-color: #4267b2;
+    color: white;
+}
+.google{
+    margin-top: 2px;
+    background-color: #EA4335;
+    color: white;
+}
+.facegg{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.facegg a:hover{
+    color: silver;
+}
+.modal-body{
+    padding-bottom: 0px !important;
+}
+.modal-footer-redefine {
+    display: -ms-flexbox;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+.endFormRegister{
+    text-align: right;
+    padding-right: 15px;
+}
+.endFormRegister a{
+    text-decoration: none;
+    color: rgb(129, 130, 131);
+}
+.warning{
+    color:red;
+    padding-top: 8px;
+}
+
+/* home */
+.buyProduct tr{
+    border: solid 2px rgb(192, 186, 186);
+    text-align: center;
+}
+.buyProduct{
+    padding: 5px 20px;
+}
+.nameDetailProduct{
+    font-size: 25px;
+    color: rgb(75, 75, 243);
+    font-weight: bold;
+}
+.linkItemProduct{
+    text-decoration: none !important;
+    transition: transform linear 0.1s;
+    will-change: transform;
+    color: black;
+}
+.linkItemProduct:hover{
+    transform: translateY(-3px);
+    color: black;
+}
+.linkItemProduct .number{
+    color: red;
+}
+.linkItemProduct:hover .number{
+    color: red;
+}
+.itemProduct{
+    background-color: white;
+}
+.imageProduct{
+    height: 300px;
+}
+.bodyPage .container{
+    padding: 0 20px !important;
+}
+.mt-3 .row .col-xl-3,.col-lg-3,.col-md-4,.col-sm-6,.col-12{
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+    padding-bottom: 16px !important;
+} 
+.textProduct{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.nameProduct{
+    white-space: pre;
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* // */
+.page{
+    margin-left: 2px;
+    margin-right: 2px;
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    line-height: 1.25;
+    text-decoration: none !important;
+    color: black;
+}
+.page:hover{
+    color: rgb(224, 188, 24) !important;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.pageNew{
+    margin-left: 2px;
+    margin-right: 2px;
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    line-height: 1.25;
+    text-decoration: none !important;
+    color: rgb(224, 188, 24) !important;
+    background-color: white;
+    border-radius: 5px;
+}
+.isDisabled {
+    color: currentColor;
+    cursor: not-allowed;
+    opacity: 0.5;
+    text-decoration: none;
+    pointer-events: none;
+  }
+
+  /* admin */
+  
+  .btnUpdate{
+    position: absolute !important;
+    left: 0px;
+    top: 0px;
+    z-index: 1 !important;
+  }
