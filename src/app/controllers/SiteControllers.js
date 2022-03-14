@@ -8,6 +8,8 @@ const ShortUniqueId = require('short-unique-id')
 const uid = new ShortUniqueId({ length: 15 });
 const sha256 = require('sha256');
 const staff = require('../models/staff')
+const infoStaff = require('../models/infoStaff')
+
 const moment = require('moment')
 
 
@@ -26,10 +28,19 @@ class SiteController {
         var dataAdmin = await admin.findOne({ userName: req.body.user, password: pass })
         var dataStaff = await staff.findOne({ userName: req.body.user, password: pass })
         if(dataAdmin != null){
-            res.json(dataAdmin)
+            var data = {
+                userName: dataAdmin.userName,
+                position: "Chủ quán"
+            }
+            res.json(data)
         }
         else if(dataStaff != null){
-            res.json(dataStaff)
+            var staffFind = await infoStaff.findOne({ userName : dataStaff.userName})
+            var data = {
+                userName: staffFind.userName,
+                position: staffFind.position
+            }
+            res.json(data)
         }
         else {
             res.json('Thất bại')
