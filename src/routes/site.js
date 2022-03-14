@@ -4,8 +4,7 @@ const sitecontroller = require('../app/controllers/SiteControllers');
 
 
 
-router.post('/thu', sitecontroller.thu);
-
+router.post('/login', sitecontroller.login);
 router.get('/', sitecontroller.index);
 
 module.exports = router;

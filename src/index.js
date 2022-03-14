@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const path = require('path');
-
-
+var cors = require('cors')
+app.use(cors({origin: true, credentials: true}));
 //notification
 const cookieParser = require('cookie-parser');
 const session = require('express-session');

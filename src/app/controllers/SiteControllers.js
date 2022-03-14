@@ -7,6 +7,7 @@ const foodMenu = require('../models/foodMenu');
 const ShortUniqueId = require('short-unique-id')
 const uid = new ShortUniqueId({ length: 15 });
 const sha256 = require('sha256');
+const staff = require('../models/staff')
 const moment = require('moment')
 
 
@@ -14,49 +15,32 @@ const moment = require('moment')
 class SiteController {
 
     async index(req, res, next) {
-        var menuFoods = await foodMenu.find({ classify: 1 })
-        var menuFoodLimit = await foodMenu.find({ classify: 1 }).limit(8)
-        var menuDrinks = await foodMenu.find({ classify: 2 })
-
-        res.json(menuFoods)
+        res.json('pqfood')
 
     }
 
 
     async login(req, res, next) {
-        var pass = sha256(req.body.passwordLogin)
+        var pass = sha256(req.body.password)
 
-        var data = await admin.findOne({ userName: req.body.userLogin, password: pass })
-        if (data != null) {
-            req.session.message = {
-                type: 'success',
-                intro: 'Chúc mừng bạn đăng nhập thành công!',
-                message: ''
-            }
-            res.cookie('adminId', data.id, {
-                signed: true,
-                maxAge: 1000 * 60 * 60 * 2
-            })
-            res.redirect('/admin')
+        var dataAdmin = await admin.findOne({ userName: req.body.user, password: pass })
+        var dataStaff = await staff.findOne({ userName: req.body.user, password: pass })
+        if(dataAdmin != null){
+            res.json(dataAdmin)
+        }
+        else if(dataStaff != null){
+            res.json(dataStaff)
         }
         else {
-            req.session.message = {
-                type: 'warning',
-                intro: 'Đăng nhập thất bại!',
-                message: 'Vui lòng đăng nhập lại!',
-                show: 'show ne'
-            }
-            res.redirect('back')
+            res.json('Thất bại')
         }
+        
     }
 
 
 
     
 
-    async thu(req,res,next){
-        res.json(req.body)
-    }
 
 }
 
