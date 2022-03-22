@@ -50,45 +50,7 @@ class SiteController {
 
     }
 
-    async homeWaiter(req, res, next) {
-        var orderFind = await order.find({})
-        var dinnerTableFind = await dinnerTable.find({})
-        var data = []
-        for (var i = 0; i < dinnerTableFind.length; i++) {
-            var temp = ""
-            for (var j = 0; j < orderFind.length; j++) {
-                if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && orderFind[j].state === "Chờ thanh toán") {
-                    temp = "xanh"
-                }
-                if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && (orderFind[j].state === "Đang xử lý" || orderFind[j].state === "Hoàn thành món")) {
-                    temp = "cam"
-                }
-            }
-            if(temp === ""){
-                data[i] = {
-                    nameTable : dinnerTableFind[i].name,
-                    color : "White",
-                    slug : dinnerTableFind[i].slug
-                }
-            }
-            else if(temp === "xanh"){
-                data[i] = {
-                    nameTable : dinnerTableFind[i].name,
-                    color : "Green",
-                    slug : dinnerTableFind[i].slug
-                }
-            }
-            else {
-                data[i] = {
-                    nameTable : dinnerTableFind[i].name,
-                    color : "Orange",
-                    slug : dinnerTableFind[i].slug
-                }
-            }
-        }
-        res.json(data)
-    }
-
+    
 
 
 
