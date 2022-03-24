@@ -18,9 +18,6 @@ const moment = require('moment')
 
 class WaiterController {
 
-
-
-
     async homeWaiter(req, res, next) {
         var orderFind = await order.find({})
         var dinnerTableFind = await dinnerTable.find({})
@@ -137,7 +134,11 @@ class WaiterController {
         else res.json("error")
     }
 
-
+    async getOrder(req,res,next){
+        var table = req.query.table
+        var orderFind = await order.findOne({dinnerTable: table})
+        res.json(orderFind)
+    }
 
 }
 
