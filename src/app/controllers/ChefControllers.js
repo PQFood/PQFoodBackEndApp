@@ -17,9 +17,9 @@ const moment = require('moment')
 
 
 
-class WaiterController {
+class ChefController {
 
-    async homeWaiter(req, res, next) {
+    async homeChef(req, res, next) {
         var orderFind = await order.find({})
         var dinnerTableFind = await dinnerTable.find({})
         var data = []
@@ -160,4 +160,4 @@ class WaiterController {
 
 }
 
-module.exports = new WaiterController();
+module.exports = new ChefController();

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const order = new Schema({
-    dinnerTable: {type: String},
+    dinnerTable: {type: String, unique: true},
     dinnerTableName: {type: String},
     orderId: {type: String, unique: true},
     note: { type: String},
