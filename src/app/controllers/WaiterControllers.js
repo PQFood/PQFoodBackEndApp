@@ -158,6 +158,65 @@ class WaiterController {
         res.json(orderFind)
     }
 
+    async getOrderEdit(req,res,next){
+        var table = req.query.table
+        var dataFood = await foodMenu.find({ classify: 1 })
+        var dataDrink = await foodMenu.find({ classify: 2 })
+        var orderTable = await order.findOne({dinnerTable: table})
+        var foodState = []
+        var drinkState = []
+        for (var i = 0; i < dataFood.length; i++) {
+            for(var j=0;j<orderTable.order.length;j++)
+            {
+                if(orderTable.order[j].slug === dataFood[i].slug && orderTable.order[j].classify === 1){
+                    foodState[i] = {
+                        quantity: orderTable.order[j].quantity,
+                        value: true,
+                        slug: dataFood[i].slug
+                    }
+                    break
+                }
+                else{
+                    foodState[i] = {
+                        quantity: 1,
+                        value: false,
+                        slug: dataFood[i].slug
+                    }
+                }
+            }
+            
+        }
+        for (var i = 0; i < dataDrink.length; i++) {
+            for(var j=0;j<orderTable.order.length;j++)
+            {
+                if(orderTable.order[j].slug === dataDrink[i].slug && orderTable.order[j].classify === 2){
+                    drinkState[i] = {
+                        quantity: orderTable.order[j].quantity,
+                        value: true,
+                        slug: dataDrink[i].slug
+                    }
+                    break
+                }
+                else{
+                    drinkState[i] = {
+                        quantity: 1,
+                        value: false,
+                        slug: dataDrink[i].slug
+                    }
+                }
+            }
+            
+        }
+        var data = {
+            food: dataFood,
+            drink: dataDrink,
+            foodState: foodState,
+            drinkState: drinkState
+        }
+        res.json(drinkState)
+    }
+
+
 }
 
 module.exports = new WaiterController();

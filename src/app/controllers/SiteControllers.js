@@ -32,7 +32,7 @@ class SiteController {
         if (dataAdmin != null) {
             var data = {
                 userName: dataAdmin.userName,
-                position: "Chủ quán"
+                position: "Chủ quán",
             }
             res.json(data)
         }
@@ -40,7 +40,8 @@ class SiteController {
             var staffFind = await infoStaff.findOne({ userName: dataStaff.userName })
             var data = {
                 userName: staffFind.userName,
-                position: staffFind.position
+                position: staffFind.position,
+                name: staffFind.name
             }
             res.json(data)
         }
