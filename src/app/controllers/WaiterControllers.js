@@ -211,9 +211,68 @@ class WaiterController {
             food: dataFood,
             drink: dataDrink,
             foodState: foodState,
-            drinkState: drinkState
+            drinkState: drinkState,
+            note: orderTable.note,
+            total: orderTable.total
         }
-        res.json(drinkState)
+        res.json(data)
+    }
+
+    async editOrder(req, res, next) {
+        var food = await req.body.food;
+        var drink = await req.body.drink;
+        var orderFind = await order.findOne({ dinnerTable: req.body.slugTable });
+        var staffTemp = await infoStaff.findOne({ userName: req.body.staff });
+        var staffNew = orderFind.staff;
+        var index = 0;
+        var orderUpdateTemp = [];
+
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Cập nhật hóa đơn",
+        }
+        for (var i = 0; i < food.length; i++) {
+            if (food[i].value === true) {
+                var foodFind = await foodMenu.findOne({ slug: food[i].slug })
+                var orderTemp = {}
+                orderTemp.name = foodFind.name
+                orderTemp.price = foodFind.price
+                orderTemp.classify = foodFind.classify
+                orderTemp.description = foodFind.description
+                orderTemp.image = foodFind.image
+                orderTemp.slug = foodFind.slug
+                orderTemp.quantity = food[i].quantity
+                orderUpdateTemp[index] = orderTemp;
+                index++;
+            }
+        }
+        for (var i = 0; i < drink.length; i++) {
+            if (drink[i].value === true) {
+                var drinkFind = await foodMenu.findOne({ slug: drink[i].slug })
+                var orderTemp = {}
+                orderTemp.name = drinkFind.name
+                orderTemp.price = drinkFind.price
+                orderTemp.classify = drinkFind.classify
+                orderTemp.description = drinkFind.description
+                orderTemp.image = drinkFind.image
+                orderTemp.slug = drinkFind.slug
+                orderTemp.quantity = drink[i].quantity
+                orderUpdateTemp[index] = orderTemp;
+                index++;
+            }
+        }
+        var result = await order.updateOne({ dinnerTable: req.body.slugTable }, {
+            order: orderUpdateTemp,
+            staff: staffNew,
+            note: req.body.note,
+            total: req.body.total,
+        })
+        
+        if(result) res.json("ok")
+        else res.json("error")
     }
 
 

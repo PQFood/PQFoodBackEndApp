@@ -14,7 +14,8 @@ const dinnerTable = require('../models/dinnerTable');
 const order = require('../models/order');
 const orderHistory = require('../models/orderHistory');
 
-const moment = require('moment')
+const moment = require('moment');
+const { query } = require('express');
 
 
 
@@ -105,15 +106,47 @@ class ChefController {
         }
         orderTable.staff = staffNew,
         orderTable.state = "Đã hủy"
-        orderTable._id = ""
-        // var orderHistoryNew = new orderHistory(orderTable)
-        // var result2 = await order.deleteOne({dinnerTable: table})
-        // var result1 = await orderHistoryNew.save()
+        var orderHistoryNew = new orderHistory()
+        orderHistoryNew.order = orderTable.order
+        orderHistoryNew.staff = orderTable.staff
+        orderHistoryNew.dinnerTable = orderTable.dinnerTable
+        orderHistoryNew.note = orderTable.note
+        orderHistoryNew.total = orderTable.total
+        orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
+        orderHistoryNew.orderId = orderTable.orderId
+        orderHistoryNew.state = orderTable.state
 
-        // if(result1 && result2) res.json("ok")
-        // else res.json("error")
-        res.json(orderTable)
+        var result2 = await order.deleteOne({dinnerTable: table})
+        var result1 = await orderHistoryNew.save()
 
+        if (result1 && result2) res.json("ok")
+        else res.json("error")
+
+    }
+
+    async getNote(req,res,next){
+        var orderTable = await order.findOne({ dinnerTable: req.query.table })
+        res.json(orderTable.note)
+    }
+
+    async setNote(req,res,next){
+        var orderTable = await order.findOne({ dinnerTable: req.body.table })
+        var staffTemp = await infoStaff.findOne({ userName: req.body.user })
+
+        var staffNew = orderTable.staff;
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Thông báo",
+        }
+        var result = await order.updateOne({dinnerTable: req.body.table},{
+            note: req.body.note,
+            staff: staffNew
+        })
+        if (result) res.json("ok")
+        else res.json("error")
     }
 
 }
