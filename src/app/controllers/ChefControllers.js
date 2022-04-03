@@ -149,6 +149,28 @@ class ChefController {
         else res.json("error")
     }
 
+    async completeOrder(req,res,next){
+        var table = req.query.table
+        var user = req.query.user
+        var staffTemp = await infoStaff.findOne({ userName: user })
+        var orderTable = await order.findOne({ dinnerTable: table })
+        var staffNew = orderTable.staff;
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Hoàn thành món",
+        }
+
+        var result = await order.updateOne({ dinnerTable: table }, {
+            staff: staffNew,
+            state: "Hoàn thành món"
+        })
+        if(result) res.json("ok")
+        else res.json("error")
+    }
+
 }
 
 module.exports = new ChefController();

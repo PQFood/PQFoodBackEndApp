@@ -3,8 +3,8 @@ const router = express.Router();
 const WaiterController = require('../app/controllers/WaiterControllers');
 
 
-
-
+router.get('/completePayOrder', WaiterController.completePayOrder);
+router.get('/completeOrder', WaiterController.completeOrder);
 router.post('/editOrder', WaiterController.editOrder);
 router.get('/getOrderEdit', WaiterController.getOrderEdit);
 router.get('/getOrder', WaiterController.getOrder);

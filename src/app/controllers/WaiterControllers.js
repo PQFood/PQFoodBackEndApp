@@ -12,6 +12,7 @@ const staff = require('../models/staff')
 const infoStaff = require('../models/infoStaff')
 const dinnerTable = require('../models/dinnerTable');
 const order = require('../models/order');
+const orderHistory = require('../models/orderHistory');
 
 const moment = require('moment')
 
@@ -272,6 +273,60 @@ class WaiterController {
         })
         
         if(result) res.json("ok")
+        else res.json("error")
+    }
+
+    async completeOrder(req,res,next){
+        var table = req.query.table
+        var user = req.query.user
+        var staffTemp = await infoStaff.findOne({ userName: user })
+        var orderTable = await order.findOne({ dinnerTable: table })
+        var staffNew = orderTable.staff;
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Hoàn thành món",
+        }
+
+        var result = await order.updateOne({ dinnerTable: table }, {
+            staff: staffNew,
+            state: "Chờ thanh toán"
+        })
+        if(result) res.json("ok")
+        else res.json("error")
+    }
+
+    async completePayOrder(req,res,next){
+        var table = req.query.table
+        var user = req.query.user
+        var staffTemp = await infoStaff.findOne({ userName: user })
+        var orderTable = await order.findOne({ dinnerTable: table })
+        var staffNew = orderTable.staff;
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Thanh toán",
+        }
+        orderTable.staff = staffNew,
+        orderTable.state = "Chờ xác nhận"
+        var orderHistoryNew = new orderHistory()
+        orderHistoryNew.order = orderTable.order
+        orderHistoryNew.staff = orderTable.staff
+        orderHistoryNew.dinnerTable = orderTable.dinnerTable
+        orderHistoryNew.note = orderTable.note
+        orderHistoryNew.total = orderTable.total
+        orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
+        orderHistoryNew.orderId = orderTable.orderId
+        orderHistoryNew.state = orderTable.state
+
+        var result2 = await order.deleteOne({dinnerTable: table})
+        var result1 = await orderHistoryNew.save()
+
+        if (result1 && result2) res.json("ok")
         else res.json("error")
     }
 
