@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const WaiterController = require('../app/controllers/WaiterControllers');
 
+router.get('/getBookTable', WaiterController.getBookTable);
 
 router.get('/completePayOrder', WaiterController.completePayOrder);
 router.get('/completeOrder', WaiterController.completeOrder);

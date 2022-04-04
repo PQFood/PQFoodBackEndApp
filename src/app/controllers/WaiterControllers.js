@@ -330,6 +330,10 @@ class WaiterController {
         else res.json("error")
     }
 
+    async getBookTable(req,res,next){
+        var bookTableFind = await bookTable.find({state: "Đang xử lý"})
+        res.json(bookTableFind)
+    }
 
 }
 
