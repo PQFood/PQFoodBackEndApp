@@ -331,8 +331,18 @@ class WaiterController {
     }
 
     async getBookTable(req,res,next){
-        var bookTableFind = await bookTable.find({state: "Đang xử lý"})
+        var bookTableFind = await bookTable.find({state: "Đang xử lý"}).sort({ time: 1 })
+        for (var i = 0; i < bookTableFind.length; i++) {
+            bookTableFind[i]._doc.time = moment(bookTableFind[i].time).format("LT,L")
+        }
         res.json(bookTableFind)
+    }
+
+    async confirmBookTable(req,res,next){
+        res.json(req.body.id)
+    }
+    async cancelBookTable(req,res,next){
+        res.json(req.body.id)
     }
 
 }

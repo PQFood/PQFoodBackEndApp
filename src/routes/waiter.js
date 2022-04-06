@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const WaiterController = require('../app/controllers/WaiterControllers');
 
+router.post('/cancelBookTable', WaiterController.cancelBookTable);
+router.post('/confirmBookTable', WaiterController.confirmBookTable);
 router.get('/getBookTable', WaiterController.getBookTable);
-
 router.get('/completePayOrder', WaiterController.completePayOrder);
 router.get('/completeOrder', WaiterController.completeOrder);
 router.post('/editOrder', WaiterController.editOrder);
