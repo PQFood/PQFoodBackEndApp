@@ -149,27 +149,26 @@ class WaiterController {
             }
         }
         var result = await orderNew.save()
-        if(result) res.json("ok")
+        if (result) res.json("ok")
         else res.json("error")
     }
 
-    async getOrder(req,res,next){
+    async getOrder(req, res, next) {
         var table = req.query.table
-        var orderFind = await order.findOne({dinnerTable: table})
+        var orderFind = await order.findOne({ dinnerTable: table })
         res.json(orderFind)
     }
 
-    async getOrderEdit(req,res,next){
+    async getOrderEdit(req, res, next) {
         var table = req.query.table
         var dataFood = await foodMenu.find({ classify: 1 })
         var dataDrink = await foodMenu.find({ classify: 2 })
-        var orderTable = await order.findOne({dinnerTable: table})
+        var orderTable = await order.findOne({ dinnerTable: table })
         var foodState = []
         var drinkState = []
         for (var i = 0; i < dataFood.length; i++) {
-            for(var j=0;j<orderTable.order.length;j++)
-            {
-                if(orderTable.order[j].slug === dataFood[i].slug && orderTable.order[j].classify === 1){
+            for (var j = 0; j < orderTable.order.length; j++) {
+                if (orderTable.order[j].slug === dataFood[i].slug && orderTable.order[j].classify === 1) {
                     foodState[i] = {
                         quantity: orderTable.order[j].quantity,
                         value: true,
@@ -177,7 +176,7 @@ class WaiterController {
                     }
                     break
                 }
-                else{
+                else {
                     foodState[i] = {
                         quantity: 1,
                         value: false,
@@ -185,12 +184,11 @@ class WaiterController {
                     }
                 }
             }
-            
+
         }
         for (var i = 0; i < dataDrink.length; i++) {
-            for(var j=0;j<orderTable.order.length;j++)
-            {
-                if(orderTable.order[j].slug === dataDrink[i].slug && orderTable.order[j].classify === 2){
+            for (var j = 0; j < orderTable.order.length; j++) {
+                if (orderTable.order[j].slug === dataDrink[i].slug && orderTable.order[j].classify === 2) {
                     drinkState[i] = {
                         quantity: orderTable.order[j].quantity,
                         value: true,
@@ -198,7 +196,7 @@ class WaiterController {
                     }
                     break
                 }
-                else{
+                else {
                     drinkState[i] = {
                         quantity: 1,
                         value: false,
@@ -206,7 +204,7 @@ class WaiterController {
                     }
                 }
             }
-            
+
         }
         var data = {
             food: dataFood,
@@ -271,12 +269,12 @@ class WaiterController {
             note: req.body.note,
             total: req.body.total,
         })
-        
-        if(result) res.json("ok")
+
+        if (result) res.json("ok")
         else res.json("error")
     }
 
-    async completeOrder(req,res,next){
+    async completeOrder(req, res, next) {
         var table = req.query.table
         var user = req.query.user
         var staffTemp = await infoStaff.findOne({ userName: user })
@@ -294,11 +292,11 @@ class WaiterController {
             staff: staffNew,
             state: "Chờ thanh toán"
         })
-        if(result) res.json("ok")
+        if (result) res.json("ok")
         else res.json("error")
     }
 
-    async completePayOrder(req,res,next){
+    async completePayOrder(req, res, next) {
         var table = req.query.table
         var user = req.query.user
         var staffTemp = await infoStaff.findOne({ userName: user })
@@ -312,7 +310,7 @@ class WaiterController {
             act: "Thanh toán",
         }
         orderTable.staff = staffNew,
-        orderTable.state = "Chờ xác nhận"
+            orderTable.state = "Chờ xác nhận"
         var orderHistoryNew = new orderHistory()
         orderHistoryNew.order = orderTable.order
         orderHistoryNew.staff = orderTable.staff
@@ -323,26 +321,47 @@ class WaiterController {
         orderHistoryNew.orderId = orderTable.orderId
         orderHistoryNew.state = orderTable.state
 
-        var result2 = await order.deleteOne({dinnerTable: table})
+        var result2 = await order.deleteOne({ dinnerTable: table })
         var result1 = await orderHistoryNew.save()
 
         if (result1 && result2) res.json("ok")
         else res.json("error")
     }
 
-    async getBookTable(req,res,next){
-        var bookTableFind = await bookTable.find({state: "Đang xử lý"}).sort({ time: 1 })
+    async getBookTable(req, res, next) {
+        var bookTableFind
+        if (req.query.state === "all") {
+            bookTableFind = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ time: 1 })
+        }
+        else{
+            bookTableFind = await bookTable.find({ state: req.query.state }).sort({ time: 1 })
+        }
         for (var i = 0; i < bookTableFind.length; i++) {
             bookTableFind[i]._doc.time = moment(bookTableFind[i].time).format("LT,L")
         }
         res.json(bookTableFind)
     }
 
-    async confirmBookTable(req,res,next){
-        res.json(req.body.id)
+    async confirmBookTable(req, res, next) {
+        var result = await bookTable.updateOne({ _id: req.body.id }, {
+            state: "Xác nhận"
+        })
+        if (result) res.json("ok")
+        else res.json("error")
     }
-    async cancelBookTable(req,res,next){
-        res.json(req.body.id)
+    async cancelBookTable(req, res, next) {
+        var result = await bookTable.updateOne({ _id: req.body.id }, {
+            state: "Hủy"
+        })
+        if (result) res.json("ok")
+        else res.json("error")
+    }
+    async completeBookTable(req, res, next) {
+        var result = await bookTable.updateOne({ _id: req.body.id }, {
+            state: "Hoàn thành"
+        })
+        if (result) res.json("ok")
+        else res.json("error")
     }
 
 }
