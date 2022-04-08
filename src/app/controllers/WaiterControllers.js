@@ -377,6 +377,12 @@ class WaiterController {
         res.json(dataSend)
     }
 
+    async getDetailOrder(req, res, next) {
+        var orderId = req.query.orderId
+        var orderFind = await orderHistory.findOne({ orderId: orderId })
+        res.json(orderFind)
+    }
+
 }
 
 module.exports = new WaiterController();

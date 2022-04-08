@@ -4,6 +4,7 @@ const WaiterController = require('../app/controllers/WaiterControllers');
 
 
 
+router.get('/getDetailOrder', WaiterController.getDetailOrder);
 router.get('/getHistoryOrder', WaiterController.getHistoryOrder);
 router.post('/completeBookTable', WaiterController.completeBookTable);
 router.post('/cancelBookTable', WaiterController.cancelBookTable);
