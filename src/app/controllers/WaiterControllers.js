@@ -364,6 +364,19 @@ class WaiterController {
         else res.json("error")
     }
 
+    async getHistoryOrder(req,res,next){
+        var quantity = req.query.quantity*2 //16
+        var orderHistoryLength = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]})
+        var result = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]}).limit(quantity)
+        var full = false
+        if(quantity >= orderHistoryLength.length) full = true
+        var dataSend = {
+            order: mutipleMongooseToObject(result),
+            full: full
+        }
+        res.json(dataSend)
+    }
+
 }
 
 module.exports = new WaiterController();
