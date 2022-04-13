@@ -13,6 +13,7 @@ const infoStaff = require('../models/infoStaff')
 const dinnerTable = require('../models/dinnerTable');
 const order = require('../models/order');
 const orderHistory = require('../models/orderHistory');
+const warehouse = require('../models/warehouse');
 
 const moment = require('moment');
 const { query } = require('express');
@@ -169,6 +170,20 @@ class ChefController {
         })
         if(result) res.json("ok")
         else res.json("error")
+    }
+
+    async getWarehouse(req,res,next){
+        var result = await warehouse.find({})
+        res.json(result)
+    }
+
+    async getOneWarehouse(req,res,next){
+        var result = await warehouse.findOne({slug: req.query.slug})
+        res.json(result)
+    }
+    async changeQuantityWarehouse(req,res,next){
+        console.log(req.body)
+        res.json(req.body.quantity)
     }
 
 }

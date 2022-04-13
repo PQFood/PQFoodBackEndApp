@@ -3,9 +3,10 @@ const router = express.Router();
 const ChefController = require('../app/controllers/ChefControllers');
 
 
-// router.get('/getOrder', ChefController.getOrder);
-// router.post('/addOrder', ChefController.addOrder);
 
+router.post('/changeQuantityWarehouse', ChefController.changeQuantityWarehouse);
+router.get('/getOneWarehouse', ChefController.getOneWarehouse);
+router.get('/getWarehouse', ChefController.getWarehouse);
 router.get('/completeOrder', ChefController.completeOrder);
 router.post('/setNote', ChefController.setNote);
 router.get('/getNote', ChefController.getNote);

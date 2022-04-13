@@ -365,7 +365,7 @@ class WaiterController {
     }
 
     async getHistoryOrder(req,res,next){
-        var quantity = req.query.quantity*2 //16
+        var quantity = req.query.quantity*4 //16
         var orderHistoryLength = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]})
         var result = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]}).limit(quantity)
         var full = false
@@ -381,6 +381,25 @@ class WaiterController {
         var orderId = req.query.orderId
         var orderFind = await orderHistory.findOne({ orderId: orderId })
         res.json(orderFind)
+    }
+    async changePassword(req,res,next){
+        var passOldCheck = sha256(req.body.passOld)
+        var passNew = sha256(req.body.passNew)
+        var result = await staff.findOne({userName : req.body.user, password: passOldCheck})
+        if(result) {
+            var resultUpdate = await staff.updateOne({userName : req.body.user},{
+                password: passNew
+            })
+            if(resultUpdate) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        else {
+            res.json("incorrect")
+        }
     }
 
 }
