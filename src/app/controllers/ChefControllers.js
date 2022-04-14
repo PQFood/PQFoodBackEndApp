@@ -182,8 +182,12 @@ class ChefController {
         res.json(result)
     }
     async changeQuantityWarehouse(req,res,next){
-        console.log(req.body)
-        res.json(req.body.quantity)
+        var quantityChange = parseFloat(req.body.quantity)
+        var result = await warehouse.updateOne({slug: req.body.slug},{
+            quantity: quantityChange
+        })
+        if(result) res.json("ok")
+        else res.json("error")
     }
 
 }
