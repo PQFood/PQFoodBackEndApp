@@ -55,7 +55,7 @@ const removeUser = (userName) => {
   })
 }
 const addNewUser = (userName, position, socketId) => {
-  let userExist = onlineUsers.find((user) => user.userName === userName)
+  let userExist = onlineUsers.find((user) => (user.userName === userName && user.position === position))
   if (userExist) {
     removeUser(userName)
   }
@@ -128,19 +128,44 @@ io.on("connection", (socket) => {
     })
   })
 
-  socket.on("sendNotificationBookShip", () => {
+  socket.on("sendNotificationBookTable", () => {
     onlineUsers.forEach((user) => {
       if (user.position === 1)
-        io.to(user.socketId).emit("getNotificationBookShip", "Có khách hàng đặt lịch")
+        io.to(user.socketId).emit("getNotificationBookTable", "Có khách hàng đặt lịch")
     })
   })
 
   socket.on("sendNotificationShipperConfirmBookShip", ({ senderName }) => {
     onlineUsers.forEach((user) => {
-      if (user.position === 2)
+      if (user.position === 4 || user.position === 3)
         io.to(user.socketId).emit("getNotificationShipperConfirmBookShip", senderName + " đã xác nhận đơn ship mới")
     })
   })
+
+  socket.on("sendNotificationShipperCancelBookShip", ({ senderName, orderId }) => {
+
+    onlineUsers.forEach((user) => {
+      if (user.position === 3 || user.position === 4) {
+        io.to(user.socketId).emit("getNotificationShipperCancelBookShip", senderName + " đã huỷ " + orderId)
+      }
+    })
+  })
+  socket.on("sendNotificationBookShip", () => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 3)
+        io.to(user.socketId).emit("getNotificationBookShip", "Có đơn đặt hàng mới")
+    })
+  })
+
+  socket.on("sendNotificationShipperUpdateBookTable", ({ senderName, orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 3|| user.position === 4)
+        io.to(user.socketId).emit("getNotificationShipperUpdateBookTable", senderName+" cập nhật " + orderId)
+    })
+  })
+
+
+
 
   socket.on("removeUserOnline", ({ userName }) => {
     console.log("co nguoi ngat ket noi")

@@ -99,58 +99,64 @@ class WaiterController {
     }
 
     async addOrder(req, res, next) {
-        var food = await req.body.food;
-        var drink = await req.body.drink;
+        try {
+            var food = await req.body.food;
+            var drink = await req.body.drink;
 
-        var orderNew = new order();
-        orderNew.dinnerTable = req.body.slugTable;
-        orderNew.note = req.body.note;
-        orderNew.total = req.body.total;
-        orderNew.dinnerTableName = req.body.nameTable;
-        orderNew.orderId = uid();
-        orderNew.state = "Đang xử lý";
-        var staffTemp = await infoStaff.findOne({ userName: req.body.staff })
-        orderNew.staff = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Thêm hóa đơn",
-        }
-        var index = 0
-        for (var i = 0; i < food.length; i++) {
-            if (food[i].value === true) {
-                var foodFind = await foodMenu.findOne({ slug: food[i].slug })
-                var orderTemp = {}
-                orderTemp.name = foodFind.name
-                orderTemp.price = foodFind.price
-                orderTemp.classify = foodFind.classify
-                orderTemp.description = foodFind.description
-                orderTemp.image = foodFind.image
-                orderTemp.slug = foodFind.slug
-                orderTemp.quantity = food[i].quantity
-                orderNew.order[index] = orderTemp;
-                index++;
+            var orderNew = new order();
+            orderNew.dinnerTable = req.body.slugTable;
+            orderNew.note = req.body.note;
+            orderNew.total = req.body.total;
+            orderNew.dinnerTableName = req.body.nameTable;
+            orderNew.orderId = uid();
+            orderNew.state = "Đang xử lý";
+            var staffTemp = await infoStaff.findOne({ userName: req.body.staff })
+            orderNew.staff = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Thêm hóa đơn",
             }
-        }
-        for (var i = 0; i < drink.length; i++) {
-            if (drink[i].value === true) {
-                var drinkFind = await foodMenu.findOne({ slug: drink[i].slug })
-                var orderTemp = {}
-                orderTemp.name = drinkFind.name
-                orderTemp.price = drinkFind.price
-                orderTemp.classify = drinkFind.classify
-                orderTemp.description = drinkFind.description
-                orderTemp.image = drinkFind.image
-                orderTemp.slug = drinkFind.slug
-                orderTemp.quantity = drink[i].quantity
-                orderNew.order[index] = orderTemp;
-                index++;
+            var index = 0
+            for (var i = 0; i < food.length; i++) {
+                if (food[i].value === true) {
+                    var foodFind = await foodMenu.findOne({ slug: food[i].slug })
+                    var orderTemp = {}
+                    orderTemp.name = foodFind.name
+                    orderTemp.price = foodFind.price
+                    orderTemp.classify = foodFind.classify
+                    orderTemp.description = foodFind.description
+                    orderTemp.image = foodFind.image
+                    orderTemp.slug = foodFind.slug
+                    orderTemp.quantity = food[i].quantity
+                    orderNew.order[index] = orderTemp;
+                    index++;
+                }
             }
+            for (var i = 0; i < drink.length; i++) {
+                if (drink[i].value === true) {
+                    var drinkFind = await foodMenu.findOne({ slug: drink[i].slug })
+                    var orderTemp = {}
+                    orderTemp.name = drinkFind.name
+                    orderTemp.price = drinkFind.price
+                    orderTemp.classify = drinkFind.classify
+                    orderTemp.description = drinkFind.description
+                    orderTemp.image = drinkFind.image
+                    orderTemp.slug = drinkFind.slug
+                    orderTemp.quantity = drink[i].quantity
+                    orderNew.order[index] = orderTemp;
+                    index++;
+                }
+            }
+            var result = await orderNew.save()
+            if (result) res.json("ok")
+            else res.json("error")
         }
-        var result = await orderNew.save()
-        if (result) res.json("ok")
-        else res.json("error")
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
     async getOrder(req, res, next) {
@@ -218,114 +224,132 @@ class WaiterController {
     }
 
     async editOrder(req, res, next) {
-        var food = await req.body.food;
-        var drink = await req.body.drink;
-        var orderFind = await order.findOne({ dinnerTable: req.body.slugTable });
-        var staffTemp = await infoStaff.findOne({ userName: req.body.staff });
-        var staffNew = orderFind.staff;
-        var index = 0;
-        var orderUpdateTemp = [];
+        try {
+            var food = await req.body.food;
+            var drink = await req.body.drink;
+            var orderFind = await order.findOne({ dinnerTable: req.body.slugTable });
+            var staffTemp = await infoStaff.findOne({ userName: req.body.staff });
+            var staffNew = orderFind.staff;
+            var index = 0;
+            var orderUpdateTemp = [];
 
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Cập nhật hóa đơn",
-        }
-        for (var i = 0; i < food.length; i++) {
-            if (food[i].value === true) {
-                var foodFind = await foodMenu.findOne({ slug: food[i].slug })
-                var orderTemp = {}
-                orderTemp.name = foodFind.name
-                orderTemp.price = foodFind.price
-                orderTemp.classify = foodFind.classify
-                orderTemp.description = foodFind.description
-                orderTemp.image = foodFind.image
-                orderTemp.slug = foodFind.slug
-                orderTemp.quantity = food[i].quantity
-                orderUpdateTemp[index] = orderTemp;
-                index++;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Cập nhật hóa đơn",
             }
-        }
-        for (var i = 0; i < drink.length; i++) {
-            if (drink[i].value === true) {
-                var drinkFind = await foodMenu.findOne({ slug: drink[i].slug })
-                var orderTemp = {}
-                orderTemp.name = drinkFind.name
-                orderTemp.price = drinkFind.price
-                orderTemp.classify = drinkFind.classify
-                orderTemp.description = drinkFind.description
-                orderTemp.image = drinkFind.image
-                orderTemp.slug = drinkFind.slug
-                orderTemp.quantity = drink[i].quantity
-                orderUpdateTemp[index] = orderTemp;
-                index++;
+            for (var i = 0; i < food.length; i++) {
+                if (food[i].value === true) {
+                    var foodFind = await foodMenu.findOne({ slug: food[i].slug })
+                    var orderTemp = {}
+                    orderTemp.name = foodFind.name
+                    orderTemp.price = foodFind.price
+                    orderTemp.classify = foodFind.classify
+                    orderTemp.description = foodFind.description
+                    orderTemp.image = foodFind.image
+                    orderTemp.slug = foodFind.slug
+                    orderTemp.quantity = food[i].quantity
+                    orderUpdateTemp[index] = orderTemp;
+                    index++;
+                }
             }
-        }
-        var result = await order.updateOne({ dinnerTable: req.body.slugTable }, {
-            order: orderUpdateTemp,
-            staff: staffNew,
-            note: req.body.note,
-            total: req.body.total,
-        })
+            for (var i = 0; i < drink.length; i++) {
+                if (drink[i].value === true) {
+                    var drinkFind = await foodMenu.findOne({ slug: drink[i].slug })
+                    var orderTemp = {}
+                    orderTemp.name = drinkFind.name
+                    orderTemp.price = drinkFind.price
+                    orderTemp.classify = drinkFind.classify
+                    orderTemp.description = drinkFind.description
+                    orderTemp.image = drinkFind.image
+                    orderTemp.slug = drinkFind.slug
+                    orderTemp.quantity = drink[i].quantity
+                    orderUpdateTemp[index] = orderTemp;
+                    index++;
+                }
+            }
+            var result = await order.updateOne({ dinnerTable: req.body.slugTable }, {
+                order: orderUpdateTemp,
+                staff: staffNew,
+                note: req.body.note,
+                total: req.body.total,
+            })
 
-        if (result) res.json("ok")
-        else res.json("error")
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
     async completeOrder(req, res, next) {
-        var table = req.query.table
-        var user = req.query.user
-        var staffTemp = await infoStaff.findOne({ userName: user })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Hoàn thành món",
-        }
+        try {
+            var table = req.query.table
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Hoàn thành món",
+            }
 
-        var result = await order.updateOne({ dinnerTable: table }, {
-            staff: staffNew,
-            state: "Chờ thanh toán"
-        })
-        if (result) res.json("ok")
-        else res.json("error")
+            var result = await order.updateOne({ dinnerTable: table }, {
+                staff: staffNew,
+                state: "Chờ thanh toán"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
     async completePayOrder(req, res, next) {
-        var table = req.query.table
-        var user = req.query.user
-        var staffTemp = await infoStaff.findOne({ userName: user })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Thanh toán",
+        try {
+            var table = req.query.table
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Thanh toán",
+            }
+            orderTable.staff = staffNew,
+                orderTable.state = "Chờ xác nhận"
+            var orderHistoryNew = new orderHistory()
+            orderHistoryNew.order = orderTable.order
+            orderHistoryNew.staff = orderTable.staff
+            orderHistoryNew.dinnerTable = orderTable.dinnerTable
+            orderHistoryNew.note = orderTable.note
+            orderHistoryNew.total = orderTable.total
+            orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
+            orderHistoryNew.orderId = orderTable.orderId
+            orderHistoryNew.state = orderTable.state
+
+            var result2 = await order.deleteOne({ dinnerTable: table })
+            var result1 = await orderHistoryNew.save()
+
+            if (result1 && result2) res.json("ok")
+            else res.json("error")
         }
-        orderTable.staff = staffNew,
-            orderTable.state = "Chờ xác nhận"
-        var orderHistoryNew = new orderHistory()
-        orderHistoryNew.order = orderTable.order
-        orderHistoryNew.staff = orderTable.staff
-        orderHistoryNew.dinnerTable = orderTable.dinnerTable
-        orderHistoryNew.note = orderTable.note
-        orderHistoryNew.total = orderTable.total
-        orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
-        orderHistoryNew.orderId = orderTable.orderId
-        orderHistoryNew.state = orderTable.state
-
-        var result2 = await order.deleteOne({ dinnerTable: table })
-        var result1 = await orderHistoryNew.save()
-
-        if (result1 && result2) res.json("ok")
-        else res.json("error")
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
     async getBookTable(req, res, next) {
@@ -333,7 +357,7 @@ class WaiterController {
         if (req.query.state === "all") {
             bookTableFind = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ time: 1 })
         }
-        else{
+        else {
             bookTableFind = await bookTable.find({ state: req.query.state }).sort({ time: 1 })
         }
         for (var i = 0; i < bookTableFind.length; i++) {
@@ -343,33 +367,51 @@ class WaiterController {
     }
 
     async confirmBookTable(req, res, next) {
-        var result = await bookTable.updateOne({ _id: req.body.id }, {
-            state: "Xác nhận"
-        })
-        if (result) res.json("ok")
-        else res.json("error")
+        try {
+            var result = await bookTable.updateOne({ _id: req.body.id }, {
+                state: "Xác nhận"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
     async cancelBookTable(req, res, next) {
-        var result = await bookTable.updateOne({ _id: req.body.id }, {
-            state: "Hủy"
-        })
-        if (result) res.json("ok")
-        else res.json("error")
+        try {
+            var result = await bookTable.updateOne({ _id: req.body.id }, {
+                state: "Hủy"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
     async completeBookTable(req, res, next) {
-        var result = await bookTable.updateOne({ _id: req.body.id }, {
-            state: "Hoàn thành"
-        })
-        if (result) res.json("ok")
-        else res.json("error")
+        try {
+            var result = await bookTable.updateOne({ _id: req.body.id }, {
+                state: "Hoàn thành"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
-    async getHistoryOrder(req,res,next){
-        var quantity = req.query.quantity*4 //16
-        var orderHistoryLength = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]})
-        var result = await orderHistory.find({state: ["Đã hủy","Đã thanh toán"]}).limit(quantity)
+    async getHistoryOrder(req, res, next) {
+        var quantity = req.query.quantity * 4 //16
+        var orderHistoryLength = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] })
+        var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).limit(quantity)
         var full = false
-        if(quantity >= orderHistoryLength.length) full = true
+        if (quantity >= orderHistoryLength.length) full = true
         var dataSend = {
             order: mutipleMongooseToObject(result),
             full: full
@@ -382,23 +424,29 @@ class WaiterController {
         var orderFind = await orderHistory.findOne({ orderId: orderId })
         res.json(orderFind)
     }
-    async changePassword(req,res,next){
-        var passOldCheck = sha256(req.body.passOld)
-        var passNew = sha256(req.body.passNew)
-        var result = await staff.findOne({userName : req.body.user, password: passOldCheck})
-        if(result) {
-            var resultUpdate = await staff.updateOne({userName : req.body.user},{
-                password: passNew
-            })
-            if(resultUpdate) {
-                res.json("ok")
+    async changePassword(req, res, next) {
+        try {
+            var passOldCheck = sha256(req.body.passOld)
+            var passNew = sha256(req.body.passNew)
+            var result = await staff.findOne({ userName: req.body.user, password: passOldCheck })
+            if (result) {
+                var resultUpdate = await staff.updateOne({ userName: req.body.user }, {
+                    password: passNew
+                })
+                if (resultUpdate) {
+                    res.json("ok")
+                }
+                else {
+                    res.json("error")
+                }
             }
             else {
-                res.json("error")
+                res.json("incorrect")
             }
         }
-        else {
-            res.json("incorrect")
+        catch (err) {
+            res.json("error")
+            console.log(err)
         }
     }
 

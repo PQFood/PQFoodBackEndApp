@@ -73,121 +73,151 @@ class ChefController {
 
 
     async ConfirmOrder(req, res, next) {
-        var table = req.query.table
-        var user = req.query.user
-        var staffTemp = await infoStaff.findOne({ userName: user })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Xác nhận hóa đơn",
+        try {
+            var table = req.query.table
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Xác nhận hóa đơn",
+            }
+            var result = await order.updateOne({ dinnerTable: table }, {
+                staff: staffNew,
+                state: "Đang chế biến"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
         }
-        var result = await order.updateOne({ dinnerTable: table }, {
-            staff: staffNew,
-            state: "Đang chế biến"
-        })
-        if(result) res.json("ok")
-        else res.json("error")
-    }
-    async deleteOrder(req,res,next){
-        var table = req.query.table
-        var user = req.query.user
-        var staffTemp = await infoStaff.findOne({ userName: user })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Hủy hóa đơn",
+        catch (err) {
+            res.json("error")
+            console.log(err)
         }
-        orderTable.staff = staffNew,
-        orderTable.state = "Đã hủy"
-        var orderHistoryNew = new orderHistory()
-        orderHistoryNew.order = orderTable.order
-        orderHistoryNew.staff = orderTable.staff
-        orderHistoryNew.dinnerTable = orderTable.dinnerTable
-        orderHistoryNew.note = orderTable.note
-        orderHistoryNew.total = orderTable.total
-        orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
-        orderHistoryNew.orderId = orderTable.orderId
-        orderHistoryNew.state = orderTable.state
+    }
+    async deleteOrder(req, res, next) {
+        try {
+            var table = req.query.table
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Hủy hóa đơn",
+            }
+            orderTable.staff = staffNew,
+                orderTable.state = "Đã hủy"
+            var orderHistoryNew = new orderHistory()
+            orderHistoryNew.order = orderTable.order
+            orderHistoryNew.staff = orderTable.staff
+            orderHistoryNew.dinnerTable = orderTable.dinnerTable
+            orderHistoryNew.note = orderTable.note
+            orderHistoryNew.total = orderTable.total
+            orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
+            orderHistoryNew.orderId = orderTable.orderId
+            orderHistoryNew.state = orderTable.state
 
-        var result2 = await order.deleteOne({dinnerTable: table})
-        var result1 = await orderHistoryNew.save()
+            var result2 = await order.deleteOne({ dinnerTable: table })
+            var result1 = await orderHistoryNew.save()
 
-        if (result1 && result2) res.json("ok")
-        else res.json("error")
+            if (result1 && result2) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
 
     }
 
-    async getNote(req,res,next){
+    async getNote(req, res, next) {
         var orderTable = await order.findOne({ dinnerTable: req.query.table })
         res.json(orderTable.note)
     }
 
-    async setNote(req,res,next){
-        var orderTable = await order.findOne({ dinnerTable: req.body.table })
-        var staffTemp = await infoStaff.findOne({ userName: req.body.user })
+    async setNote(req, res, next) {
+        try {
+            var orderTable = await order.findOne({ dinnerTable: req.body.table })
+            var staffTemp = await infoStaff.findOne({ userName: req.body.user })
 
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Thông báo",
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Thông báo",
+            }
+            var result = await order.updateOne({ dinnerTable: req.body.table }, {
+                note: req.body.note,
+                staff: staffNew
+            })
+            if (result) res.json("ok")
+            else res.json("error")
         }
-        var result = await order.updateOne({dinnerTable: req.body.table},{
-            note: req.body.note,
-            staff: staffNew
-        })
-        if (result) res.json("ok")
-        else res.json("error")
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
-    async completeOrder(req,res,next){
-        var table = req.query.table
-        var user = req.query.user
-        var staffTemp = await infoStaff.findOne({ userName: user })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var staffNew = orderTable.staff;
-        staffNew[staffNew.length] = {
-            id: idstaff(),
-            userName: staffTemp.userName,
-            name: staffTemp.name,
-            position: staffTemp.position,
-            act: "Hoàn thành món",
-        }
+    async completeOrder(req, res, next) {
+        try {
+            var table = req.query.table
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var staffNew = orderTable.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Hoàn thành món",
+            }
 
-        var result = await order.updateOne({ dinnerTable: table }, {
-            staff: staffNew,
-            state: "Hoàn thành món"
-        })
-        if(result) res.json("ok")
-        else res.json("error")
+            var result = await order.updateOne({ dinnerTable: table }, {
+                staff: staffNew,
+                state: "Hoàn thành món"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
-    async getWarehouse(req,res,next){
+    async getWarehouse(req, res, next) {
         var result = await warehouse.find({})
         res.json(result)
     }
 
-    async getOneWarehouse(req,res,next){
-        var result = await warehouse.findOne({slug: req.query.slug})
+    async getOneWarehouse(req, res, next) {
+        var result = await warehouse.findOne({ slug: req.query.slug })
         res.json(result)
     }
-    async changeQuantityWarehouse(req,res,next){
-        var quantityChange = parseFloat(req.body.quantity)
-        var result = await warehouse.updateOne({slug: req.body.slug},{
-            quantity: quantityChange
-        })
-        if(result) res.json("ok")
-        else res.json("error")
+    async changeQuantityWarehouse(req, res, next) {
+        try {
+            var quantityChange = parseFloat(req.body.quantity)
+            var result = await warehouse.updateOne({ slug: req.body.slug }, {
+                quantity: quantityChange
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
     }
 
 }
