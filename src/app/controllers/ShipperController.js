@@ -44,6 +44,51 @@ class ShipperController {
         res.json(data)
     }
 
+    async getBookShip(req,res,next){
+        var result = await bookShip.findOne({orderId: req.query.orderId})
+        res.json(result)
+    }
+
+    async confirmBookShip(req,res,next){
+        var orderId = req.query.orderId
+        var user = req.query.user
+        var staffTemp = await infoStaff.findOne({ userName: user })
+        var bookShipFind = await bookShip.findOne({ orderId: orderId })
+        var staffNew = bookShipFind.staff;
+        staffNew[staffNew.length] = {
+            id: idstaff(),
+            userName: staffTemp.userName,
+            name: staffTemp.name,
+            position: staffTemp.position,
+            act: "Xác nhận hóa đơn",
+        }
+        var result = await bookShip.updateOne({ orderId: orderId }, {
+            staff: staffNew,
+            state: "Đã xác nhận"
+        })
+        if(result) res.json("ok")
+        else res.json("error")
+
+    }
+
+    async deleteBookShip(req,res,next){
+        var orderId = req.query.orderId
+        var orderFind = await order.findOne({ orderId: slug })
+        var orderHistoryNew = {}
+        orderHistoryNew.dinnerTable = orderFind.dinnerTable
+        orderHistoryNew.dinnerTableName = orderFind.dinnerTableName
+        orderHistoryNew.orderId = orderFind.orderId
+        orderHistoryNew.note = orderFind.note
+        orderHistoryNew.order = orderFind.order
+        orderHistoryNew.total = orderFind.total
+        orderHistoryNew.state = "Đã hủy"
+        orderHistoryNew.staff = orderFind.staff
+        orderHistoryNew = new orderHistory(orderHistoryNew)
+        var resultInsert = await orderHistoryNew.save()
+        var resultDelete = await order.deleteOne({ orderId: slug })
+        res.json(req.query.orderId)
+    }
+
 
 
 }

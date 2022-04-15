@@ -135,6 +135,13 @@ io.on("connection", (socket) => {
     })
   })
 
+  socket.on("sendNotificationShipperConfirmBookShip", ({ senderName }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 2)
+        io.to(user.socketId).emit("getNotificationShipperConfirmBookShip", senderName + " đã xác nhận đơn ship mới")
+    })
+  })
+
   socket.on("removeUserOnline", ({ userName }) => {
     console.log("co nguoi ngat ket noi")
     removeUser(userName)
