@@ -4,6 +4,9 @@ const ChefController = require('../app/controllers/ChefControllers');
 
 
 
+router.get('/completeBookShip', ChefController.completeBookShip);
+router.get('/confirmBookShip', ChefController.confirmBookShip);
+router.get('/chefBookShip', ChefController.chefBookShip);
 router.post('/changeQuantityWarehouse', ChefController.changeQuantityWarehouse);
 router.get('/getOneWarehouse', ChefController.getOneWarehouse);
 router.get('/getWarehouse', ChefController.getWarehouse);

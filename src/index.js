@@ -164,6 +164,30 @@ io.on("connection", (socket) => {
     })
   })
 
+  socket.on("sendNotificationChefConfirmBookShip", ({ senderName, orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 4 || user.position === 3)
+        io.to(user.socketId).emit("getNotificationChefConfirmBookShip", senderName + " đã xác nhận " + orderId)
+    })
+  })
+
+  socket.on("sendNotificationChefCompleteBookShip", ({ senderName, orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 4 || user.position === 3)
+        io.to(user.socketId).emit("getNotificationChefCompleteBookShip", senderName + " đã hoàn thành " + orderId)
+    })
+  })
+
+  socket.on("sendNotificationShipperReceiveBookShip", ({ senderName, orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 4 || user.position === 3)
+        io.to(user.socketId).emit("getNotificationShipperReceiveBookShip", senderName + " đã nhận món " + orderId)
+    })
+  })
+
+
+
+
 
 
 

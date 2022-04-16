@@ -23,30 +23,40 @@ const { query } = require('express');
 class ShipperController {
 
     async homeShipper(req, res, next) {
-        var bookshipFind = await bookShip.find({})
-        var data = mutipleMongooseToObject(bookshipFind)
-        for (var i = 0; i < bookshipFind.length; i++) {
+        try {
+            var bookshipFind = await bookShip.find({})
+            var data = mutipleMongooseToObject(bookshipFind)
+            for (var i = 0; i < bookshipFind.length; i++) {
 
-            if (bookshipFind[i].state === "Chờ xác nhận") {
-                data[i].color = "white"
-            }
-            if (bookshipFind[i].state === "Đã xác nhận" || bookshipFind[i].state === "Đang chế biến") {
-                data[i].color = "orange"
-            }
-            if (bookshipFind[i].state === "Hoàn thành món") {
-                data[i].color = "blue"
-            }
-            if (bookshipFind[i].state === "Đang giao") {
-                data[i].color = "green"
-            }
+                if (bookshipFind[i].state === "Chờ xác nhận") {
+                    data[i].color = "white"
+                }
+                if (bookshipFind[i].state === "Đã xác nhận" || bookshipFind[i].state === "Đang chế biến") {
+                    data[i].color = "orange"
+                }
+                if (bookshipFind[i].state === "Hoàn thành món") {
+                    data[i].color = "blue"
+                }
+                if (bookshipFind[i].state === "Đang giao") {
+                    data[i].color = "green"
+                }
 
+            }
+            res.json(data)
         }
-        res.json(data)
+        catch (err) {
+            console.log(err)
+        }
     }
 
     async getBookShip(req, res, next) {
+        try{
         var result = await bookShip.findOne({ orderId: req.query.orderId })
         res.json(result)
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     async confirmBookShip(req, res, next) {
@@ -239,6 +249,34 @@ class ShipperController {
             res.json("error")
             console.log(err)
         }
+    }
+
+    async receiveBookShip(req, res, next) {
+        try {
+            var orderId = req.query.orderId
+            var user = req.query.user
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var bookShipFind = await bookShip.findOne({ orderId: orderId })
+            var staffNew = bookShipFind.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Nhận món",
+            }
+            var result = await bookShip.updateOne({ orderId: orderId }, {
+                staff: staffNew,
+                state: "Đang giao"
+            })
+            if (result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+
     }
 
 }

@@ -21,80 +21,89 @@ const moment = require('moment')
 class WaiterController {
 
     async homeWaiter(req, res, next) {
-        var orderFind = await order.find({})
-        var dinnerTableFind = await dinnerTable.find({})
-        var data = []
-        for (var i = 0; i < dinnerTableFind.length; i++) {
-            var temp = ""
-            for (var j = 0; j < orderFind.length; j++) {
-                if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && orderFind[j].state === "Chờ thanh toán") {
-                    temp = "luc"
+        try {
+            var orderFind = await order.find({})
+            var dinnerTableFind = await dinnerTable.find({})
+            var data = []
+            for (var i = 0; i < dinnerTableFind.length; i++) {
+                var temp = ""
+                for (var j = 0; j < orderFind.length; j++) {
+                    if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && orderFind[j].state === "Chờ thanh toán") {
+                        temp = "luc"
+                    }
+                    if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && (orderFind[j].state === "Đang xử lý" || orderFind[j].state === "Đang chế biến")) {
+                        temp = "cam"
+                    }
+                    if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && (orderFind[j].state === "Hoàn thành món")) {
+                        temp = "duong"
+                    }
                 }
-                if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && (orderFind[j].state === "Đang xử lý" || orderFind[j].state === "Đang chế biến")) {
-                    temp = "cam"
+                if (temp === "") {
+                    data[i] = {
+                        nameTable: dinnerTableFind[i].name,
+                        color: "White",
+                        slug: dinnerTableFind[i].slug
+                    }
                 }
-                if (dinnerTableFind[i].slug === orderFind[j].dinnerTable && (orderFind[j].state === "Hoàn thành món")) {
-                    temp = "duong"
+                else if (temp === "luc") {
+                    data[i] = {
+                        nameTable: dinnerTableFind[i].name,
+                        color: "Green",
+                        slug: dinnerTableFind[i].slug
+                    }
+                }
+                else if (temp === "duong") {
+                    data[i] = {
+                        nameTable: dinnerTableFind[i].name,
+                        color: "Blue",
+                        slug: dinnerTableFind[i].slug
+                    }
+                }
+                else {
+                    data[i] = {
+                        nameTable: dinnerTableFind[i].name,
+                        color: "Orange",
+                        slug: dinnerTableFind[i].slug
+                    }
                 }
             }
-            if (temp === "") {
-                data[i] = {
-                    nameTable: dinnerTableFind[i].name,
-                    color: "White",
-                    slug: dinnerTableFind[i].slug
-                }
-            }
-            else if (temp === "luc") {
-                data[i] = {
-                    nameTable: dinnerTableFind[i].name,
-                    color: "Green",
-                    slug: dinnerTableFind[i].slug
-                }
-            }
-            else if (temp === "duong") {
-                data[i] = {
-                    nameTable: dinnerTableFind[i].name,
-                    color: "Blue",
-                    slug: dinnerTableFind[i].slug
-                }
-            }
-            else {
-                data[i] = {
-                    nameTable: dinnerTableFind[i].name,
-                    color: "Orange",
-                    slug: dinnerTableFind[i].slug
-                }
-            }
+            res.json(data)
         }
-        res.json(data)
+        catch (err) {
+            console.log(err)
+        }
     }
     async getFood(req, res, next) {
-
-        var dataFood = await foodMenu.find({ classify: 1 })
-        var dataDrink = await foodMenu.find({ classify: 2 })
-        var foodState = []
-        var drinkState = []
-        for (var i = 0; i < dataFood.length; i++) {
-            foodState[i] = {
-                quantity: 1,
-                value: false,
-                slug: dataFood[i].slug
+        try {
+            var dataFood = await foodMenu.find({ classify: 1 })
+            var dataDrink = await foodMenu.find({ classify: 2 })
+            var foodState = []
+            var drinkState = []
+            for (var i = 0; i < dataFood.length; i++) {
+                foodState[i] = {
+                    quantity: 1,
+                    value: false,
+                    slug: dataFood[i].slug
+                }
             }
-        }
-        for (var i = 0; i < dataDrink.length; i++) {
-            drinkState[i] = {
-                quantity: 1,
-                value: false,
-                slug: dataDrink[i].slug
+            for (var i = 0; i < dataDrink.length; i++) {
+                drinkState[i] = {
+                    quantity: 1,
+                    value: false,
+                    slug: dataDrink[i].slug
+                }
             }
+            var data = {
+                food: dataFood,
+                drink: dataDrink,
+                foodState: foodState,
+                drinkState: drinkState
+            }
+            res.json(data)
         }
-        var data = {
-            food: dataFood,
-            drink: dataDrink,
-            foodState: foodState,
-            drinkState: drinkState
+        catch (err) {
+            console.log(err)
         }
-        res.json(data)
 
     }
 
@@ -160,67 +169,77 @@ class WaiterController {
     }
 
     async getOrder(req, res, next) {
-        var table = req.query.table
-        var orderFind = await order.findOne({ dinnerTable: table })
-        res.json(orderFind)
+        try {
+            var table = req.query.table
+            var orderFind = await order.findOne({ dinnerTable: table })
+            res.json(orderFind)
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     async getOrderEdit(req, res, next) {
-        var table = req.query.table
-        var dataFood = await foodMenu.find({ classify: 1 })
-        var dataDrink = await foodMenu.find({ classify: 2 })
-        var orderTable = await order.findOne({ dinnerTable: table })
-        var foodState = []
-        var drinkState = []
-        for (var i = 0; i < dataFood.length; i++) {
-            for (var j = 0; j < orderTable.order.length; j++) {
-                if (orderTable.order[j].slug === dataFood[i].slug && orderTable.order[j].classify === 1) {
-                    foodState[i] = {
-                        quantity: orderTable.order[j].quantity,
-                        value: true,
-                        slug: dataFood[i].slug
+        try {
+            var table = req.query.table
+            var dataFood = await foodMenu.find({ classify: 1 })
+            var dataDrink = await foodMenu.find({ classify: 2 })
+            var orderTable = await order.findOne({ dinnerTable: table })
+            var foodState = []
+            var drinkState = []
+            for (var i = 0; i < dataFood.length; i++) {
+                for (var j = 0; j < orderTable.order.length; j++) {
+                    if (orderTable.order[j].slug === dataFood[i].slug && orderTable.order[j].classify === 1) {
+                        foodState[i] = {
+                            quantity: orderTable.order[j].quantity,
+                            value: true,
+                            slug: dataFood[i].slug
+                        }
+                        break
                     }
-                    break
-                }
-                else {
-                    foodState[i] = {
-                        quantity: 1,
-                        value: false,
-                        slug: dataFood[i].slug
+                    else {
+                        foodState[i] = {
+                            quantity: 1,
+                            value: false,
+                            slug: dataFood[i].slug
+                        }
                     }
                 }
-            }
 
-        }
-        for (var i = 0; i < dataDrink.length; i++) {
-            for (var j = 0; j < orderTable.order.length; j++) {
-                if (orderTable.order[j].slug === dataDrink[i].slug && orderTable.order[j].classify === 2) {
-                    drinkState[i] = {
-                        quantity: orderTable.order[j].quantity,
-                        value: true,
-                        slug: dataDrink[i].slug
-                    }
-                    break
-                }
-                else {
-                    drinkState[i] = {
-                        quantity: 1,
-                        value: false,
-                        slug: dataDrink[i].slug
-                    }
-                }
             }
+            for (var i = 0; i < dataDrink.length; i++) {
+                for (var j = 0; j < orderTable.order.length; j++) {
+                    if (orderTable.order[j].slug === dataDrink[i].slug && orderTable.order[j].classify === 2) {
+                        drinkState[i] = {
+                            quantity: orderTable.order[j].quantity,
+                            value: true,
+                            slug: dataDrink[i].slug
+                        }
+                        break
+                    }
+                    else {
+                        drinkState[i] = {
+                            quantity: 1,
+                            value: false,
+                            slug: dataDrink[i].slug
+                        }
+                    }
+                }
 
+            }
+            var data = {
+                food: dataFood,
+                drink: dataDrink,
+                foodState: foodState,
+                drinkState: drinkState,
+                note: orderTable.note,
+                total: orderTable.total
+            }
+            res.json(data)
         }
-        var data = {
-            food: dataFood,
-            drink: dataDrink,
-            foodState: foodState,
-            drinkState: drinkState,
-            note: orderTable.note,
-            total: orderTable.total
+        catch (err) {
+            console.log(err)
         }
-        res.json(data)
     }
 
     async editOrder(req, res, next) {
@@ -353,17 +372,22 @@ class WaiterController {
     }
 
     async getBookTable(req, res, next) {
-        var bookTableFind
-        if (req.query.state === "all") {
-            bookTableFind = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ time: 1 })
+        try {
+            var bookTableFind
+            if (req.query.state === "all") {
+                bookTableFind = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ time: 1 })
+            }
+            else {
+                bookTableFind = await bookTable.find({ state: req.query.state }).sort({ time: 1 })
+            }
+            for (var i = 0; i < bookTableFind.length; i++) {
+                bookTableFind[i]._doc.time = moment(bookTableFind[i].time).format("LT,L")
+            }
+            res.json(bookTableFind)
         }
-        else {
-            bookTableFind = await bookTable.find({ state: req.query.state }).sort({ time: 1 })
+        catch (err) {
+            console.log(err)
         }
-        for (var i = 0; i < bookTableFind.length; i++) {
-            bookTableFind[i]._doc.time = moment(bookTableFind[i].time).format("LT,L")
-        }
-        res.json(bookTableFind)
     }
 
     async confirmBookTable(req, res, next) {
@@ -407,22 +431,32 @@ class WaiterController {
     }
 
     async getHistoryOrder(req, res, next) {
-        var quantity = req.query.quantity * 4 //16
-        var orderHistoryLength = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] })
-        var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).limit(quantity)
-        var full = false
-        if (quantity >= orderHistoryLength.length) full = true
-        var dataSend = {
-            order: mutipleMongooseToObject(result),
-            full: full
+        try {
+            var quantity = req.query.quantity * 4 //16
+            var orderHistoryLength = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] })
+            var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).limit(quantity)
+            var full = false
+            if (quantity >= orderHistoryLength.length) full = true
+            var dataSend = {
+                order: mutipleMongooseToObject(result),
+                full: full
+            }
+            res.json(dataSend)
         }
-        res.json(dataSend)
+        catch (err) {
+            console.log(err)
+        }
     }
 
     async getDetailOrder(req, res, next) {
-        var orderId = req.query.orderId
-        var orderFind = await orderHistory.findOne({ orderId: orderId })
-        res.json(orderFind)
+        try {
+            var orderId = req.query.orderId
+            var orderFind = await orderHistory.findOne({ orderId: orderId })
+            res.json(orderFind)
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
     async changePassword(req, res, next) {
         try {

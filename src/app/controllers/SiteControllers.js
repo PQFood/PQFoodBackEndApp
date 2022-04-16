@@ -25,33 +25,38 @@ class SiteController {
 
 
     async login(req, res, next) {
-        var pass = sha256(req.body.password)
+        try {
+            var pass = sha256(req.body.password)
 
-        var dataAdmin = await admin.findOne({ userName: req.body.user, password: pass })
-        var dataStaff = await staff.findOne({ userName: req.body.user, password: pass })
-        if (dataAdmin != null) {
-            var data = {
-                userName: dataAdmin.userName,
-                position: "Chủ quán",
+            var dataAdmin = await admin.findOne({ userName: req.body.user, password: pass })
+            var dataStaff = await staff.findOne({ userName: req.body.user, password: pass })
+            if (dataAdmin != null) {
+                var data = {
+                    userName: dataAdmin.userName,
+                    position: "Chủ quán",
+                }
+                res.json(data)
             }
-            res.json(data)
-        }
-        else if (dataStaff != null) {
-            var staffFind = await infoStaff.findOne({ userName: dataStaff.userName })
-            var data = {
-                userName: staffFind.userName,
-                position: staffFind.position,
-                name: staffFind.name
+            else if (dataStaff != null) {
+                var staffFind = await infoStaff.findOne({ userName: dataStaff.userName })
+                var data = {
+                    userName: staffFind.userName,
+                    position: staffFind.position,
+                    name: staffFind.name
+                }
+                res.json(data)
             }
-            res.json(data)
+            else {
+                res.json('Thất bại')
+            }
         }
-        else {
-            res.json('Thất bại')
+        catch (err) {
+            console.log(err)
         }
 
     }
 
-    
+
 
 
 

@@ -5,7 +5,7 @@ const ShipperController = require('../app/controllers/ShipperController');
 
 
 // router.post('/changeQuantityWarehouse', ShipperController.changeQuantityWarehouse);
-// router.get('/getOneWarehouse', ShipperController.getOneWarehouse);
+router.get('/receiveBookShip', ShipperController.receiveBookShip);
 router.post('/editBookShip', ShipperController.editBookShip);
 router.get('/getBookShipEdit', ShipperController.getBookShipEdit);
 router.get('/deleteBookShip', ShipperController.deleteBookShip);
