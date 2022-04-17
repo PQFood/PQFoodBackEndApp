@@ -117,8 +117,8 @@ class ChefController {
                 position: staffTemp.position,
                 act: "Hủy hóa đơn",
             }
-            orderTable.staff = staffNew,
-                orderTable.state = "Đã hủy"
+            orderTable.staff = staffNew
+            orderTable.state = "Đã hủy"
             var orderHistoryNew = new orderHistory()
             orderHistoryNew.order = orderTable.order
             orderHistoryNew.staff = orderTable.staff
@@ -295,7 +295,7 @@ class ChefController {
 
     }
 
-    async completeBookShip(req,res,next){
+    async completeBookShip(req, res, next) {
         try {
             var orderId = req.query.orderId
             var user = req.query.user

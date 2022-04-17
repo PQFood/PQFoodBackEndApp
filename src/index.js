@@ -185,6 +185,13 @@ io.on("connection", (socket) => {
     })
   })
 
+  socket.on("sendNotificationShipperCompleteBookShip", ({ senderName, orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 4 || user.position === 3)
+        io.to(user.socketId).emit("getNotificationShipperCompleteBookShip", senderName + " đã hoàn thành " + orderId)
+    })
+  })
+
 
 
 

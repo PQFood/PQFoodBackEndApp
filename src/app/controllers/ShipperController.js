@@ -50,9 +50,18 @@ class ShipperController {
     }
 
     async getBookShip(req, res, next) {
-        try{
-        var result = await bookShip.findOne({ orderId: req.query.orderId })
-        res.json(result)
+        try {
+            var result = await bookShip.findOne({ orderId: req.query.orderId })
+            res.json(result)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    async getBookShipHistoryElement(req, res, next) {
+        try {
+            var result = await shipHistory.findOne({ orderId: req.query.orderId })
+            res.json(result)
         }
         catch (err) {
             console.log(err)
@@ -90,15 +99,24 @@ class ShipperController {
     async deleteBookShip(req, res, next) {
         try {
             var orderId = req.query.orderId
+            var user = req.query.user
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffNew = bookShipFind.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Hủy hóa đơn",
+            }
             var bookShipHistoryNew = {}
-
             bookShipHistoryNew.orderId = bookShipFind.orderId
             bookShipHistoryNew.note = bookShipFind.note
             bookShipHistoryNew.order = bookShipFind.order
             bookShipHistoryNew.total = bookShipFind.total
             bookShipHistoryNew.state = "Đã hủy"
-            bookShipHistoryNew.staff = bookShipFind.staff
+            bookShipHistoryNew.staff = staffNew
             bookShipHistoryNew.phoneNumber = bookShipFind.phoneNumber
             bookShipHistoryNew.name = bookShipFind.name
             bookShipHistoryNew.address = bookShipFind.address
@@ -277,6 +295,59 @@ class ShipperController {
             console.log(err)
         }
 
+    }
+    async completeBookShip(req, res, next) {
+        try {
+            var orderId = req.query.orderId
+            var user = req.query.user
+            var bookShipFind = await bookShip.findOne({ orderId: orderId })
+            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffNew = bookShipFind.staff;
+            staffNew[staffNew.length] = {
+                id: idstaff(),
+                userName: staffTemp.userName,
+                name: staffTemp.name,
+                position: staffTemp.position,
+                act: "Hủy hóa đơn",
+            }
+            var bookShipHistoryNew = {}
+            bookShipHistoryNew.orderId = bookShipFind.orderId
+            bookShipHistoryNew.note = bookShipFind.note
+            bookShipHistoryNew.order = bookShipFind.order
+            bookShipHistoryNew.total = bookShipFind.total
+            bookShipHistoryNew.state = "Chờ xác nhận"
+            bookShipHistoryNew.staff = staffNew
+            bookShipHistoryNew.phoneNumber = bookShipFind.phoneNumber
+            bookShipHistoryNew.name = bookShipFind.name
+            bookShipHistoryNew.address = bookShipFind.address
+
+            bookShipHistoryNew = new shipHistory(bookShipHistoryNew)
+            var resultInsert = await bookShipHistoryNew.save()
+            var resultDelete = await bookShip.deleteOne({ orderId: orderId })
+            if (resultInsert && resultDelete) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async getBookShipHistory(req, res, next) {
+        try {
+            var quantity = req.query.quantity * 16 //16
+            var orderHistoryLength = await shipHistory.find({ state: ["Đã hủy", "Đã hoàn thành"] })
+            var result = await shipHistory.find({ state: ["Đã hủy", "Đã hoàn thành"] }).sort({updatedAt: -1}).limit(quantity)
+            var full = false
+            if (quantity >= orderHistoryLength.length) full = true
+            var dataSend = {
+                order: mutipleMongooseToObject(result),
+                full: full
+            }
+            res.json(dataSend)
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
 }

@@ -434,7 +434,7 @@ class WaiterController {
         try {
             var quantity = req.query.quantity * 4 //16
             var orderHistoryLength = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] })
-            var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).limit(quantity)
+            var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).sort({updatedAt: -1}).limit(quantity)
             var full = false
             if (quantity >= orderHistoryLength.length) full = true
             var dataSend = {

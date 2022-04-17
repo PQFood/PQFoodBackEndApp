@@ -3,8 +3,9 @@ const router = express.Router();
 const ShipperController = require('../app/controllers/ShipperController');
 
 
-
-// router.post('/changeQuantityWarehouse', ShipperController.changeQuantityWarehouse);
+router.get('/getBookShipHistoryElement', ShipperController.getBookShipHistoryElement);
+router.get('/getBookShipHistory', ShipperController.getBookShipHistory);
+router.get('/completeBookShip', ShipperController.completeBookShip);
 router.get('/receiveBookShip', ShipperController.receiveBookShip);
 router.post('/editBookShip', ShipperController.editBookShip);
 router.get('/getBookShipEdit', ShipperController.getBookShipEdit);
