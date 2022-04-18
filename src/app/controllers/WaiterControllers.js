@@ -375,7 +375,21 @@ class WaiterController {
         try {
             var bookTableFind
             if (req.query.state === "all") {
-                bookTableFind = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ time: 1 })
+                var quantity = req.query.quantity * 2 //16
+                var bookTableHistoryLength = await bookTable.find({ state: ["Hoàn thành", "Hủy"] })
+                var bookTbaleHistory = await bookTable.find({ state: ["Hoàn thành", "Hủy"] }).sort({ updatedAt: -1 }).limit(quantity)
+                if (quantity >= bookTableHistoryLength.length) {
+                    bookTableFind = {
+                        bookTable: bookTbaleHistory,
+                        full: true
+                    }
+                }
+                else {
+                    bookTableFind = {
+                        bookTable: bookTbaleHistory,
+                        full: false
+                    }
+                }
             }
             else {
                 bookTableFind = await bookTable.find({ state: req.query.state }).sort({ time: 1 })
@@ -434,7 +448,7 @@ class WaiterController {
         try {
             var quantity = req.query.quantity * 4 //16
             var orderHistoryLength = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] })
-            var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).sort({updatedAt: -1}).limit(quantity)
+            var result = await orderHistory.find({ state: ["Đã hủy", "Đã thanh toán"] }).sort({ updatedAt: -1 }).limit(quantity)
             var full = false
             if (quantity >= orderHistoryLength.length) full = true
             var dataSend = {
