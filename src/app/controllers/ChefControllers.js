@@ -107,6 +107,7 @@ class ChefController {
         try {
             var table = req.query.table
             var user = req.query.user
+            var reason = req.query.reason
             var staffTemp = await infoStaff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
@@ -128,7 +129,7 @@ class ChefController {
             orderHistoryNew.dinnerTableName = orderTable.dinnerTableName
             orderHistoryNew.orderId = orderTable.orderId
             orderHistoryNew.state = orderTable.state
-
+            orderHistoryNew.reason = reason
             var result2 = await order.deleteOne({ dinnerTable: table })
             var result1 = await orderHistoryNew.save()
 

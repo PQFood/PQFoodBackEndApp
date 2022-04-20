@@ -10,6 +10,7 @@ const orderHistory = new Schema({
     total: {type: Number},
     state: {type: String},
     staff: {type: Array},
+    reason: {type: String}
   },{
     timestamps: true,
   });

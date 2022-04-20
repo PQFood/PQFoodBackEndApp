@@ -100,6 +100,7 @@ class ShipperController {
         try {
             var orderId = req.query.orderId
             var user = req.query.user
+            var reason = req.query.reason
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var staffTemp = await infoStaff.findOne({ userName: user })
             var staffNew = bookShipFind.staff;
@@ -120,7 +121,8 @@ class ShipperController {
             bookShipHistoryNew.phoneNumber = bookShipFind.phoneNumber
             bookShipHistoryNew.name = bookShipFind.name
             bookShipHistoryNew.address = bookShipFind.address
-
+            bookShipHistoryNew.reason = reason
+            
             bookShipHistoryNew = new shipHistory(bookShipHistoryNew)
             var resultInsert = await bookShipHistoryNew.save()
             var resultDelete = await bookShip.deleteOne({ orderId: orderId })
