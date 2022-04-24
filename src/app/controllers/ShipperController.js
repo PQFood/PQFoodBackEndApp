@@ -336,7 +336,7 @@ class ShipperController {
     }
     async getBookShipHistory(req, res, next) {
         try {
-            var quantity = req.query.quantity * 16 //16
+            var quantity = req.query.quantity * 4 //16
             var orderHistoryLength = await shipHistory.find({ state: ["Đã hủy", "Đã hoàn thành"] })
             var result = await shipHistory.find({ state: ["Đã hủy", "Đã hoàn thành"] }).sort({updatedAt: -1}).limit(quantity)
             var full = false

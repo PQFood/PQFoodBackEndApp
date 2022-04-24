@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
   socket.on("sendNotificationWaiterCompleteOrder", ({ senderName, table }) => {
     onlineUsers.forEach((user) => {
       if (user.position === 1 || user.position === 2)
-        io.to(user.socketId).emit("getNotificationWaiterCompleteOrder", senderName + " đã hoàn thành món " + table)
+        io.to(user.socketId).emit("getNotificationWaiterCompleteOrder", senderName + " đã nhận món " + table)
     })
   })
 
