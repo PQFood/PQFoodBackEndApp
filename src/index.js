@@ -193,6 +193,20 @@ io.on("connection", (socket) => {
   })
 
 
+  socket.on("sendNotificationAdminCancelOrder", ({ nameTable }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 1 || user.position === 2)
+        io.to(user.socketId).emit("getNotificationAdminCancelOrder", "Chủ quán đã hủy hóa đơn bàn " + nameTable)
+    })
+  })
+
+  socket.on("sendNotificationAdminCancelShip", ({ orderId }) => {
+    onlineUsers.forEach((user) => {
+      if (user.position === 3 || user.position === 2)
+        io.to(user.socketId).emit("getNotificationAdminCancelShip", "Chủ quán đã hủy hóa đơn " + orderId)
+    })
+  })
+
 
 
 
