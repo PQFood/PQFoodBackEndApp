@@ -3,6 +3,8 @@ const router = express.Router();
 const admincontroller = require('../app/controllers/AdminControllers');
 
 
+router.post('/deleteStaff', admincontroller.deleteStaff);
+router.get('/listStaff', admincontroller.listStaff);
 router.post('/cancelOrder', admincontroller.cancelOrder);
 router.post('/cancelBookShip', admincontroller.cancelBookShip);
 router.get('/getDetailShipCurrent', admincontroller.getDetailShipCurrent);

@@ -213,6 +213,36 @@ class SiteController {
 
     }
 
+    async listStaff(req, res, next) {
+        try {
+            var infoStaffFind = await infoStaff.find({})
+            res.json(infoStaffFind)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async deleteStaff(req, res, next) {
+        try {
+            var slug = req.body.slug
+            var resultStaff = await staff.deleteOne({ userName: slug })
+            var resultInfoStaff = await infoStaff.deleteOne({ userName: slug })
+            if (resultStaff && resultInfoStaff) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+
 
 }
 
