@@ -273,15 +273,53 @@ class SiteController {
                 res.json("ok")
             }
             else {
-                res.json("erorr")
+                res.json("error")
             }
         }
         catch (err) {
-            res.json("erorr")
+            res.json("error")
             console.log(err)
         }
     }
 
+    async getInfoStaff(req, res, next) {
+        try {
+            var result = await infoStaff.findOne({ userName: req.query.userName })
+            res.json(result)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async editStaff(req, res, next) {
+        try {
+            var result = await infoStaff.updateOne({ userName: req.body.userNameStaff }, {
+                name: req.body.name,
+                phoneNumber: req.body.phoneNumber,
+                address: req.body.address,
+                position: req.body.position,
+            })
+            if(result) res.json("ok")
+            else res.json("error")
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async getDinnerTable(req, res, next) {
+        try {
+            var result = await dinnerTable.find({})
+            res.json(result)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
 
 
 }

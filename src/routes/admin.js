@@ -4,8 +4,10 @@ const admincontroller = require('../app/controllers/AdminControllers');
 
 
 
+router.get('/getDinnerTable', admincontroller.getDinnerTable);
+router.post('/editStaff', admincontroller.editStaff);
+router.get('/getInfoStaff', admincontroller.getInfoStaff);
 router.post('/addStaff', admincontroller.addStaff);
-
 router.get('/checkStaffExist', admincontroller.checkStaffExist);
 router.post('/deleteStaff', admincontroller.deleteStaff);
 router.get('/listStaff', admincontroller.listStaff);
