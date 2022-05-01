@@ -186,7 +186,7 @@ class SiteController {
     async cancelBookShip(req, res, next) {
         try {
             var orderId = req.body.orderId
-            
+
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var bookShipHistoryNew = {}
             bookShipHistoryNew.orderId = bookShipFind.orderId
@@ -199,7 +199,7 @@ class SiteController {
             bookShipHistoryNew.name = bookShipFind.name
             bookShipHistoryNew.address = bookShipFind.address
             bookShipHistoryNew.reason = "Chủ quán hủy"
-            
+
             bookShipHistoryNew = new shipHistory(bookShipHistoryNew)
             var resultDelete = await bookShip.deleteOne({ orderId: orderId })
             var resultInsert = await bookShipHistoryNew.save()
@@ -238,6 +238,46 @@ class SiteController {
         }
         catch (err) {
             res.json("error")
+            console.log(err)
+        }
+    }
+
+    async checkStaffExist(req, res, next) {
+        try {
+            var data = await staff.findOne({ userName: req.query.userName })
+            var data2 = await admin.findOne({ userName: req.query.userName })
+            if (data != null || data2 != null) {
+                res.json(false)
+            }
+            else {
+                res.json(true)
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async addStaff(req, res, next) {
+        try {
+            var pass = sha256(req.body.password)
+            const staffNew = new staff(req.body)
+            staffNew.password = pass
+            const infoStaffNew = new infoStaff(req.body)
+
+            //add
+            var resultUploadStaff = await staffNew.save()
+            var resultUploadÌnoStaff = await infoStaffNew.save()
+            if (resultUploadStaff && resultUploadÌnoStaff) {
+                res.json("ok")
+            }
+            else {
+                res.json("erorr")
+            }
+        }
+        catch (err) {
+            res.json("erorr")
             console.log(err)
         }
     }

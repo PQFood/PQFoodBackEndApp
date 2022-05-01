@@ -3,6 +3,10 @@ const router = express.Router();
 const admincontroller = require('../app/controllers/AdminControllers');
 
 
+
+router.post('/addStaff', admincontroller.addStaff);
+
+router.get('/checkStaffExist', admincontroller.checkStaffExist);
 router.post('/deleteStaff', admincontroller.deleteStaff);
 router.get('/listStaff', admincontroller.listStaff);
 router.post('/cancelOrder', admincontroller.cancelOrder);
