@@ -301,7 +301,7 @@ class SiteController {
                 address: req.body.address,
                 position: req.body.position,
             })
-            if(result) res.json("ok")
+            if (result) res.json("ok")
             else res.json("error")
         }
         catch (err) {
@@ -314,6 +314,72 @@ class SiteController {
         try {
             var result = await dinnerTable.find({})
             res.json(result)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async addDinnerTable(req, res, next) {
+        try {
+            const tableNew = new dinnerTable(req.body)
+            var result = await tableNew.save()
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+
+    async deleteDinnerTable(req, res, next) {
+        try {
+            var slug = req.body.slug
+            var result = await dinnerTable.deleteOne({ slug: slug })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async getInfoDinnerTable(req, res, next) {
+        try {
+            var result = await dinnerTable.findOne({ slug : req.query.slug})
+            res.json(result)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async editDinnerTable(req, res, next) {
+        try {
+            var slug = req.body.slug
+            var result = await dinnerTable.updateOne({ slug: slug }, {
+                name: req.body.name,
+                description: req.body.description,
+                quantity: req.body.quantity,
+            })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
         }
         catch (err) {
             res.json("error")

@@ -4,6 +4,10 @@ const admincontroller = require('../app/controllers/AdminControllers');
 
 
 
+router.post('/editDinnerTable', admincontroller.editDinnerTable);
+router.get('/getInfoDinnerTable', admincontroller.getInfoDinnerTable);
+router.post('/deleteDinnerTable', admincontroller.deleteDinnerTable);
+router.post('/addDinnerTable', admincontroller.addDinnerTable);
 router.get('/getDinnerTable', admincontroller.getDinnerTable);
 router.post('/editStaff', admincontroller.editStaff);
 router.get('/getInfoStaff', admincontroller.getInfoStaff);
