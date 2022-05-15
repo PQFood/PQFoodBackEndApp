@@ -7,14 +7,8 @@ const foodMenu = require('../models/foodMenu');
 const ShortUniqueId = require('short-unique-id')
 const uid = new ShortUniqueId({ length: 15 });
 const idstaff = new ShortUniqueId({ length: 10 });
-const sha256 = require('sha256');
 const staff = require('../models/staff')
-const infoStaff = require('../models/infoStaff')
-const dinnerTable = require('../models/dinnerTable');
-const order = require('../models/order');
-const orderHistory = require('../models/orderHistory');
 const shipHistory = require('../models/shipHistory');
-const warehouse = require('../models/warehouse');
 const moment = require('moment');
 const { query } = require('express');
 
@@ -72,7 +66,7 @@ class ShipperController {
         try {
             var orderId = req.query.orderId
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {
@@ -102,7 +96,7 @@ class ShipperController {
             var user = req.query.user
             var reason = req.query.reason
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {
                 id: idstaff(),
@@ -208,7 +202,7 @@ class ShipperController {
             var food = await req.body.food;
             var drink = await req.body.drink;
             var bookShipFind = await bookShip.findOne({ orderId: req.body.orderId });
-            var staffTemp = await infoStaff.findOne({ userName: req.body.staff });
+            var staffTemp = await staff.findOne({ userName: req.body.staff });
             var staffNew = bookShipFind.staff;
             var index = 0;
             var orderUpdateTemp = [];
@@ -275,7 +269,7 @@ class ShipperController {
         try {
             var orderId = req.query.orderId
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {
@@ -303,7 +297,7 @@ class ShipperController {
             var orderId = req.query.orderId
             var user = req.query.user
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {
                 id: idstaff(),

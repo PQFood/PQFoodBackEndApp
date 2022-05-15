@@ -3,6 +3,20 @@ const app = express()
 const path = require('path');
 var cors = require('cors')
 app.use(cors({ origin: true, credentials: true }));
+
+//cloudinary
+const fileupload = require("express-fileupload");
+const cloudinary = require('cloudinary').v2
+//
+app.use(fileupload({useTempFiles : true}));
+
+cloudinary.config({ 
+  cloud_name: 'pqshop', 
+  api_key: '235438731113978', 
+  api_secret: 'zOM2Llga6w4fei6pO1ey6AQniMU',
+});
+
+
 //notification
 const cookieParser = require('cookie-parser');
 const session = require('express-session');

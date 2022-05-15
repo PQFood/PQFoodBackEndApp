@@ -9,7 +9,6 @@ const uid = new ShortUniqueId({ length: 15 });
 const idstaff = new ShortUniqueId({ length: 10 });
 const sha256 = require('sha256');
 const staff = require('../models/staff')
-const infoStaff = require('../models/infoStaff')
 const dinnerTable = require('../models/dinnerTable');
 const order = require('../models/order');
 const orderHistory = require('../models/orderHistory');
@@ -81,7 +80,7 @@ class ChefController {
         try {
             var table = req.query.table
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {
@@ -108,7 +107,7 @@ class ChefController {
             var table = req.query.table
             var user = req.query.user
             var reason = req.query.reason
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {
@@ -156,7 +155,7 @@ class ChefController {
     async setNote(req, res, next) {
         try {
             var orderTable = await order.findOne({ dinnerTable: req.body.table })
-            var staffTemp = await infoStaff.findOne({ userName: req.body.user })
+            var staffTemp = await staff.findOne({ userName: req.body.user })
 
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {
@@ -183,7 +182,7 @@ class ChefController {
         try {
             var table = req.query.table
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {
@@ -272,7 +271,7 @@ class ChefController {
         try {
             var orderId = req.query.orderId
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {
@@ -300,7 +299,7 @@ class ChefController {
         try {
             var orderId = req.query.orderId
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var bookShipFind = await bookShip.findOne({ orderId: orderId })
             var staffNew = bookShipFind.staff;
             staffNew[staffNew.length] = {

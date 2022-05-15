@@ -9,7 +9,6 @@ const uid = new ShortUniqueId({ length: 15 });
 const idstaff = new ShortUniqueId({ length: 10 });
 const sha256 = require('sha256');
 const staff = require('../models/staff')
-const infoStaff = require('../models/infoStaff')
 const dinnerTable = require('../models/dinnerTable');
 const order = require('../models/order');
 const orderHistory = require('../models/orderHistory');
@@ -119,7 +118,7 @@ class WaiterController {
             orderNew.dinnerTableName = req.body.nameTable;
             orderNew.orderId = uid();
             orderNew.state = "Đang xử lý";
-            var staffTemp = await infoStaff.findOne({ userName: req.body.staff })
+            var staffTemp = await staff.findOne({ userName: req.body.staff })
             orderNew.staff = {
                 id: idstaff(),
                 userName: staffTemp.userName,
@@ -247,7 +246,7 @@ class WaiterController {
             var food = await req.body.food;
             var drink = await req.body.drink;
             var orderFind = await order.findOne({ dinnerTable: req.body.slugTable });
-            var staffTemp = await infoStaff.findOne({ userName: req.body.staff });
+            var staffTemp = await staff.findOne({ userName: req.body.staff });
             var staffNew = orderFind.staff;
             var index = 0;
             var orderUpdateTemp = [];
@@ -309,7 +308,7 @@ class WaiterController {
         try {
             var table = req.query.table
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {
@@ -337,7 +336,7 @@ class WaiterController {
         try {
             var table = req.query.table
             var user = req.query.user
-            var staffTemp = await infoStaff.findOne({ userName: user })
+            var staffTemp = await staff.findOne({ userName: user })
             var orderTable = await order.findOne({ dinnerTable: table })
             var staffNew = orderTable.staff;
             staffNew[staffNew.length] = {

@@ -3,7 +3,7 @@ const router = express.Router();
 const admincontroller = require('../app/controllers/AdminControllers');
 
 
-
+router.post('/addFoodMenu', admincontroller.addFoodMenu);
 router.post('/editDinnerTable', admincontroller.editDinnerTable);
 router.get('/getInfoDinnerTable', admincontroller.getInfoDinnerTable);
 router.post('/deleteDinnerTable', admincontroller.deleteDinnerTable);

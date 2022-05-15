@@ -5,7 +5,6 @@ const { mutipleMongooseToObject } = require('../../util/mongoose');
 const { MongooseToObject } = require('../../util/mongoose');
 const sha256 = require('sha256');
 const staff = require('../models/staff');
-const infoStaff = require('../models/infoStaff');
 const dinnerTable = require('../models/dinnerTable');
 const warehouse = require('../models/warehouse');
 const order = require('../models/order');
@@ -215,7 +214,7 @@ class SiteController {
 
     async listStaff(req, res, next) {
         try {
-            var infoStaffFind = await infoStaff.find({})
+            var infoStaffFind = await staff.find({})
             res.json(infoStaffFind)
         }
         catch (err) {
@@ -228,8 +227,7 @@ class SiteController {
         try {
             var slug = req.body.slug
             var resultStaff = await staff.deleteOne({ userName: slug })
-            var resultInfoStaff = await infoStaff.deleteOne({ userName: slug })
-            if (resultStaff && resultInfoStaff) {
+            if (resultStaff) {
                 res.json("ok")
             }
             else {
@@ -264,12 +262,9 @@ class SiteController {
             var pass = sha256(req.body.password)
             const staffNew = new staff(req.body)
             staffNew.password = pass
-            const infoStaffNew = new infoStaff(req.body)
-
             //add
             var resultUploadStaff = await staffNew.save()
-            var resultUploadÌnoStaff = await infoStaffNew.save()
-            if (resultUploadStaff && resultUploadÌnoStaff) {
+            if (resultUploadStaff) {
                 res.json("ok")
             }
             else {
@@ -284,7 +279,7 @@ class SiteController {
 
     async getInfoStaff(req, res, next) {
         try {
-            var result = await infoStaff.findOne({ userName: req.query.userName })
+            var result = await staff.findOne({ userName: req.query.userName })
             res.json(result)
         }
         catch (err) {
@@ -295,7 +290,7 @@ class SiteController {
 
     async editStaff(req, res, next) {
         try {
-            var result = await infoStaff.updateOne({ userName: req.body.userNameStaff }, {
+            var result = await staff.updateOne({ userName: req.body.userNameStaff }, {
                 name: req.body.name,
                 phoneNumber: req.body.phoneNumber,
                 address: req.body.address,
@@ -357,7 +352,7 @@ class SiteController {
     }
     async getInfoDinnerTable(req, res, next) {
         try {
-            var result = await dinnerTable.findOne({ slug : req.query.slug})
+            var result = await dinnerTable.findOne({ slug: req.query.slug })
             res.json(result)
         }
         catch (err) {
@@ -380,6 +375,24 @@ class SiteController {
             else {
                 res.json("error")
             }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async addFoodMenu(req, res, next) {
+        try {
+            await cloudinary.uploader.upload(req.body.image,
+                {
+                    folder: 'pqfood',
+                    use_filename: true
+                },
+                function (error, result) {
+                    console.log(result)
+                });
+            // console.log(req.body.image)
+            res.json("ok")
         }
         catch (err) {
             res.json("error")
