@@ -3,6 +3,16 @@ const router = express.Router();
 const admincontroller = require('../app/controllers/AdminControllers');
 
 
+
+
+router.post('/restoreMenu', admincontroller.restoreMenu);
+router.post('/deleteMenu', admincontroller.deleteMenu);
+router.get('/listBinMenu', admincontroller.listBinMenu);
+router.get('/listDrink', admincontroller.listDrink);
+router.post('/editFoodMenu', admincontroller.editFoodMenu);
+router.get('/getInfoFood', admincontroller.getInfoFood);
+router.post('/deleteFood', admincontroller.deleteFood);
+router.get('/listFood', admincontroller.listFood);
 router.post('/addFoodMenu', admincontroller.addFoodMenu);
 router.post('/editDinnerTable', admincontroller.editDinnerTable);
 router.get('/getInfoDinnerTable', admincontroller.getInfoDinnerTable);

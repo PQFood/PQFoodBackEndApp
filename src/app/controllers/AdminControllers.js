@@ -383,16 +383,123 @@ class SiteController {
     }
     async addFoodMenu(req, res, next) {
         try {
-            await cloudinary.uploader.upload(req.body.image,
-                {
-                    folder: 'pqfood',
-                    use_filename: true
-                },
-                function (error, result) {
-                    console.log(result)
-                });
-            // console.log(req.body.image)
-            res.json("ok")
+            const foodNew = new foodMenu(req.body)
+            var resultUpload = await foodNew.save()
+            if (resultUpload) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async listFood(req, res, next) {
+        try {
+            var food = await foodMenu.find({ classify: 1 })
+            res.json(food)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async deleteFood(req, res, next) {
+        try {
+            var slug = await req.body.slug
+            var result = await foodMenu.delete({ slug: slug })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async getInfoFood(req, res, next) {
+        try {
+            var foodFind = await foodMenu.findOne({ slug: req.query.slug })
+            res.json(foodFind)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async editFoodMenu(req, res, next) {
+        try {
+            var result = await foodMenu.updateOne({ slug: req.body.slug }, {
+                name: req.body.name,
+                price: parseInt(req.body.price),
+                image: req.body.image,
+                classify: parseInt(req.body.classify),
+                description: req.body.description,
+            })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async listDrink(req, res, next) {
+        try {
+            var drink = await foodMenu.find({ classify: 2 })
+            res.json(drink)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async listBinMenu(req, res, next) {
+        try {
+            var result = await foodMenu.findDeleted({})
+            res.json(result)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async deleteMenu(req, res, next) {
+        try {
+            var slug = await req.body.slug
+            var result = await foodMenu.deleteOne({ slug: slug })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async restoreMenu(req, res, next) {
+        try {
+            var slug = await req.body.slug
+            var result = await foodMenu.restore({ slug: slug })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
         }
         catch (err) {
             res.json("error")
