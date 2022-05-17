@@ -4,7 +4,9 @@ const admincontroller = require('../app/controllers/AdminControllers');
 
 
 
-
+router.post('/editWarehouse', admincontroller.editWarehouse);
+router.post('/deleteWarehouse', admincontroller.deleteWarehouse);
+router.post('/addWarehouse', admincontroller.addWarehouse);
 router.post('/restoreMenu', admincontroller.restoreMenu);
 router.post('/deleteMenu', admincontroller.deleteMenu);
 router.get('/listBinMenu', admincontroller.listBinMenu);

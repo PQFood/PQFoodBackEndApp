@@ -506,6 +506,60 @@ class SiteController {
             console.log(err)
         }
     }
+    async addWarehouse(req, res, next) {
+        try {
+            const warehouseNew = new warehouse(req.body);
+            var result = await warehouseNew.save()
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async deleteWarehouse(req, res, next) {
+        try {
+            var result = await warehouse.deleteOne({slug: req.body.slug})
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async editWarehouse(req,res,next){
+        try{
+            var slug = req.body.slug
+            var result = await warehouse.updateOne({ slug: slug }, {
+                name: req.body.name,
+                unit: req.body.unit,
+                quantity: req.body.quantity,
+                providerName: req.body.providerName,
+                providerPhoneNumber: req.body.providerPhoneNumber,
+                providerAddress: req.body.providerAddress,
+            })
+            if (result) {
+                res.json("ok")
+            }
+            else {
+                res.json("error")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
 
 
 }
