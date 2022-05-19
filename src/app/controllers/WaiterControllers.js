@@ -496,6 +496,16 @@ class WaiterController {
             console.log(err)
         }
     }
+    async getOrderSearch(req,res,next){
+        try{
+            var histories = await orderHistory.find({ orderId: new RegExp('.*' + req.query.search + '.*') }).sort({ updatedAt: -1 })
+            res.json(histories)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
 
 }
 

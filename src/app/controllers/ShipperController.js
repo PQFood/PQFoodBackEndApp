@@ -345,6 +345,16 @@ class ShipperController {
             console.log(err)
         }
     }
+    async getShipSearch(req,res,next){
+        try{
+            var shipHistoriySearch = await shipHistory.find({ orderId: new RegExp('.*' + req.query.search + '.*') }).sort({ updatedAt: -1 })
+            res.json(shipHistoriySearch)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
 
 }
 

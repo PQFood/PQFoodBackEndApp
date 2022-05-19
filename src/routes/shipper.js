@@ -3,6 +3,7 @@ const router = express.Router();
 const ShipperController = require('../app/controllers/ShipperController');
 
 
+router.get('/getShipSearch', ShipperController.getShipSearch);
 router.get('/getBookShipHistoryElement', ShipperController.getBookShipHistoryElement);
 router.get('/getBookShipHistory', ShipperController.getBookShipHistory);
 router.get('/completeBookShip', ShipperController.completeBookShip);

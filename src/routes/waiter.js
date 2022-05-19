@@ -3,8 +3,9 @@ const router = express.Router();
 const WaiterController = require('../app/controllers/WaiterControllers');
 
 
-router.post('/changePassword', WaiterController.changePassword);
 
+router.get('/getOrderSearch', WaiterController.getOrderSearch);
+router.post('/changePassword', WaiterController.changePassword);
 router.get('/getDetailOrder', WaiterController.getDetailOrder);
 router.get('/getHistoryOrder', WaiterController.getHistoryOrder);
 router.post('/completeBookTable', WaiterController.completeBookTable);
