@@ -524,7 +524,7 @@ class SiteController {
     }
     async deleteWarehouse(req, res, next) {
         try {
-            var result = await warehouse.deleteOne({slug: req.body.slug})
+            var result = await warehouse.deleteOne({ slug: req.body.slug })
             if (result) {
                 res.json("ok")
             }
@@ -537,8 +537,8 @@ class SiteController {
             console.log(err)
         }
     }
-    async editWarehouse(req,res,next){
-        try{
+    async editWarehouse(req, res, next) {
+        try {
             var slug = req.body.slug
             var result = await warehouse.updateOne({ slug: slug }, {
                 name: req.body.name,
@@ -560,7 +560,108 @@ class SiteController {
             console.log(err)
         }
     }
+    async dayRevenue(req, res, next) {
+        try {
+            var timeRevenue = moment(req.query.dayRevenue).startOf('day')
+            var data = await orderHistory.find({
+                updatedAt: {
+                    $gte: timeRevenue.toDate(),
+                    $lte: moment(timeRevenue).endOf('day').toDate()
+                },
+                state: "Đã thanh toán"
+            })
+            var total = 0
+            for (var i = 0; i < data.length; i++) {
+                total = total + data[i].total
+            }
 
+            var dataShip = await shipHistory.find({
+                updatedAt: {
+                    $gte: timeRevenue.toDate(),
+                    $lte: moment(timeRevenue).endOf('day').toDate()
+                },
+                state: "Đã hoàn thành"
+            })
+
+            for (var i = 0; i < dataShip.length; i++) {
+                total = total + dataShip[i].total
+            }
+            res.json(total)
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+    async weekRevenue(req, res, next) {
+        try {
+            var todayWeek = moment(req.query.timeRevenue).startOf('day')
+
+            var arrDay = []
+            var dem = 0
+
+            for (var i = todayWeek.isoWeekday() - 1; i > 0; i--) {
+                var temp = moment(todayWeek)
+                arrDay[dem] = temp.subtract(i, 'days')
+                dem++
+            }
+
+            arrDay[dem] = todayWeek
+            dem++
+
+            for (var i = 1; i <= 7 - todayWeek.isoWeekday(); i++) {
+                var temp = moment(todayWeek)
+                arrDay[dem] = temp.add(i, 'days')
+                dem++
+            }
+
+            var arrTotal = []
+            var totalWeek = 0
+            for (var i = 0; i < 7; i++) {
+                var dayFind = arrDay[i]
+                var data = await orderHistory.find({
+                    updatedAt: {
+                        $gte: dayFind.startOf('day').toDate(),
+                        $lte: moment(dayFind).endOf('day').toDate()
+                    },
+                    state: "Đã thanh toán"
+                })
+
+                var totalTempWeek = 0
+
+                for (var j = 0; j < data.length; j++) {
+                    totalTempWeek = totalTempWeek + data[j].total
+                }
+
+                var dataShip = await shipHistory.find({
+                    updatedAt: {
+                        $gte: dayFind.startOf('day').toDate(),
+                        $lte: moment(dayFind).endOf('day').toDate()
+                    },
+                    state: "Đã hoàn thành"
+                })
+
+                for (var j = 0; j < dataShip.length; j++) {
+                    totalTempWeek = totalTempWeek + dataShip[j].total
+                }
+                totalWeek = totalWeek + totalTempWeek
+                arrTotal[i] = totalTempWeek
+            }
+
+            for (var i = 0; i < 7; i++) {
+                arrDay[i] = arrDay[i].format('DD/MM');
+            }
+            res.json({
+                arrDay: arrDay,
+                arrTotal: arrTotal,
+                totalWeek: totalWeek
+            })
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
 
 }
 

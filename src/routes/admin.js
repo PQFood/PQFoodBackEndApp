@@ -4,6 +4,8 @@ const admincontroller = require('../app/controllers/AdminControllers');
 
 
 
+router.get('/weekRevenue', admincontroller.weekRevenue);
+router.get('/dayRevenue', admincontroller.dayRevenue);
 router.post('/editWarehouse', admincontroller.editWarehouse);
 router.post('/deleteWarehouse', admincontroller.deleteWarehouse);
 router.post('/addWarehouse', admincontroller.addWarehouse);
