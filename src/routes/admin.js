@@ -3,7 +3,8 @@ const router = express.Router();
 const admincontroller = require('../app/controllers/AdminControllers');
 
 
-
+router.post('/changePassword', admincontroller.changePassword);
+router.get('/monthRevenue', admincontroller.monthRevenue);
 router.get('/weekRevenue', admincontroller.weekRevenue);
 router.get('/dayRevenue', admincontroller.dayRevenue);
 router.post('/editWarehouse', admincontroller.editWarehouse);

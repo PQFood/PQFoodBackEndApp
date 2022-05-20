@@ -663,6 +663,76 @@ class SiteController {
         }
     }
 
+    async monthRevenue(req, res, next) {
+        try {
+            var date = new Date(req.query.timeRevenue)
+            var year = date.getFullYear()
+            var arr = []
+            var totalYear = 0
+            for (var i = 1; i <= 12; i++) {
+                var currentDate = moment(year + '-' + i, 'YYYY-MM')
+                var orders = await orderHistory.find({
+                    updatedAt: {
+                        $gte: currentDate.startOf('month').toDate(),
+                        $lte: moment(currentDate).endOf('month').toDate()
+                    },
+                    state: "Đã thanh toán"
+                })
+                var temp = 0
+                for (var j = 0; j < orders.length; j++) {
+                    temp = temp + orders[j].total
+                }
+
+                var ships = await shipHistory.find({
+                    updatedAt: {
+                        $gte: currentDate.toDate(),
+                        $lte: moment(currentDate).endOf('month').toDate()
+                    },
+                    state: "Đã hoàn thành"
+                })
+                for (var j = 0; j < ships.length; j++) {
+                    temp = temp + ships[j].total
+                }
+                totalYear = totalYear + temp
+                arr[i - 1] = temp
+            }
+            res.json({
+                totalYear: totalYear,
+                arrMonth: arr
+            })
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
+    async changePassword(req, res, next) {
+        try {
+            var passOldCheck = sha256(req.body.passOld)
+            var passNew = sha256(req.body.passNew)
+            var result = await admin.findOne({ userName: req.body.user, password: passOldCheck })
+            if (result) {
+                var resultUpdate = await admin.updateOne({ userName: req.body.user }, {
+                    password: passNew
+                })
+                if (resultUpdate) {
+                    res.json("ok")
+                }
+                else {
+                    res.json("error")
+                }
+            }
+            else {
+                res.json("incorrect")
+            }
+        }
+        catch (err) {
+            res.json("error")
+            console.log(err)
+        }
+    }
+
 }
 
 module.exports = new SiteController();
